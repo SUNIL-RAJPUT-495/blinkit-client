@@ -3,9 +3,10 @@ import { Container, Row, Col } from "react-bootstrap";
 
 export const Home = () => {
   const categories = [
+    { src: "/Image/category/Fruits-Vegetables.png", alt: "Fruits & Vegetables" },
+    { src: "/Image/category/Dairy-Bread-Eggs.png", alt: "Dairy, Bread & Eggs" },
     { src: "/Image/category/Pet-Care.png", alt: "Pet Care" },
     { src: "/Image/category/Dairy-Bread-Eggs.png", alt: "Dairy, Bread & Eggs" },
-    { src: "/Image/category/Fruits-Vegetables.png", alt: "Fruits & Vegetables" },
     { src: "/Image/category/Cold-Drinks-Juices.png", alt: "Cold Drinks & Juices" },
     { src: "/Image/category/Snacks-Munchies.png", alt: "Snacks & Munchies" },
     { src: "/Image/category/Breakfast-Instant-Food.png", alt: "Breakfast & Instant Food" },
@@ -22,7 +23,6 @@ export const Home = () => {
     { src: "/Image/category/Cleaning-Essentials.png", alt: "Cleaning Essentials" },
     { src: "/Image/category/Home-Office.png", alt: "Home & Office"},
     { src: "/Image/category/Personal-Care.png", alt: "Personal Care"},
-    
   ];
   
   return (
@@ -35,17 +35,17 @@ export const Home = () => {
         </Row>
 
         <Row className="pt-4">
-          <Col xs="auto">
-            <a href="#"><img src="/Home/pharmacy-WEB.avif" alt="Pharmacy" style={{ height: "200px" }} /></a>
-            <a href="#"><img src="/Home/babycare-WEB.avif" alt="Baby Care" style={{ height: "200px" }} /></a>
-            <a href="#"><img src="/Home/Pet-Care_WEB.avif" alt="Pet Care" style={{ height: "200px" }} /></a>
+          <Col xs="auto" >
+          <span>  <a href="#"><img src="/Home/pharmacy-WEB.avif" alt="Pharmacy" style={{ height: "200px", margin:"5px" }} /></a></span>
+          <span> <a href="#"><img src="/Home/babycare-WEB.avif" alt="Baby Care" style={{ height: "200px",margin:"5px" }} /></a></span>
+           <span> <a href="#"><img src="/Home/Pet-Care_WEB.avif" alt="Pet Care" style={{ height: "200px",margin:"5px" }} /></a></span>
           </Col>
         </Row>
         <Row>
           <Col>
             {categories.map((pic, i) => (
               <a href="#" key={i} className="p-2">
-                <img src={pic.src} alt={pic.alt} style={{ height: "200px" }} />
+                <img src={pic.src} alt={pic.alt} style={{ height: "150px" }} />
               </a>
             ))}
           </Col>

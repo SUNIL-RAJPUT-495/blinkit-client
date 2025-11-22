@@ -31,9 +31,7 @@ export const Header = () => {
             Delivery in 9 minutes
           </p>
 
-          <p style={{ fontSize: "14px", marginTop: "0px", marginBottom: "0" }}>
-            D,tara nagar jhotwara jaipur
-          </p>
+          
         </div>
         {/* search section */}
         <div>
