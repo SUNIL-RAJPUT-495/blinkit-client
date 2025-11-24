@@ -1,15 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
-import App from "../App.jsx";
-import { Searchpage } from "../pages/Searchpage";
-import { Home } from "../pages/Home";
-import { LoginPage } from "../pages/LoginPage";
-import { OtpInput } from "../pages/OtpInput.jsx";
-import { AdminPage } from "../pages/AdminPage.jsx";
+import {CustomerLayout} from "../layout/CustomerLayout"
+import { Searchpage } from "../pages/customer/Searchpage.jsx";
+import { Home } from "../pages/customer/Home.jsx";
+import { LoginPage } from "../pages/Auth/LoginPage.jsx";
+import { OtpInput } from "../pages/Auth/OtpInput.jsx";
+import { AdminLayout } from "../layout/AdminLayout.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <CustomerLayout/>,
     children: [
       { path: "/", element: <Home /> },
       { path: "/search", element: <Searchpage /> },
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     
   },
   { path:"/login/OtpInput",element:<OtpInput/>},
-  {path:"/AdminPage",element:<AdminPage/>}
+  {path:"/AdminLayout",element:<AdminLayout/>}
 ]);
 
 export default router;

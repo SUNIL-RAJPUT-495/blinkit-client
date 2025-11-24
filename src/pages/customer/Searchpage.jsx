@@ -1,4 +1,3 @@
-import React from "react";
 import { FiSearch } from "react-icons/fi";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { Link } from "react-router-dom";
