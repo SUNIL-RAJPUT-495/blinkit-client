@@ -1,122 +1,50 @@
-import {  useState } from "react";
-import { Container, Row, Col} from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import { Header } from "../Component/Header";
-import { Category } from "../pages/admin/Categories/Category";
-import { SubCategory } from "../pages/admin/SubCategory/SubCategory";
-import { UplodProductPage } from "../pages/admin/Products/UplodProductPage";
-import { ProfilePage } from "../pages/admin/ProfilePage";
+import { Link, Outlet } from "react-router-dom";
 
 export const AdminLayout = () => {
-  const [ShowProfile, SetShowProfile] = useState(true);
-  const [ShowCategory, SetShowCategory] = useState(false);
-  const [ShowSubCategory, SetShowSubCategory] = useState(false);
-  const [ShowUplod, SetShowUplod] = useState(false);
-
- 
-
-  const Profile = () => {
-    SetShowProfile(true);
-    SetShowCategory(false);
-    SetShowSubCategory(false);
-    SetShowUplod(false);
-  };
-  const category = () => {
-    SetShowCategory(true);
-    SetShowSubCategory(false);
-    SetShowUplod(false);
-    SetShowProfile(false);
-  };
-  const subCategory = () => {
-    SetShowCategory(false);
-    SetShowSubCategory(true);
-    SetShowUplod(false);
-    SetShowProfile(false);
-  };
-  const uplodProduct = () => {
-    SetShowCategory(false);
-    SetShowSubCategory(false);
-    SetShowUplod(true);
-    SetShowProfile(false);
-  };
-
-
-
-
-
   return (
     <>
-      <Header />
+    <Header/>
 
       <Container>
         <Row>
           {/* LEFT SIDE MENU */}
-          <Col md={2}>
+          <Col md={2} className="border-end">
             <div>
-              <p
-                className="fw-bold"
-                onClick={Profile}
-                style={{ cursor: "pointer" }}
-              >
-                My Account
+              <p className="fw-bold">
+                <Link to="/admin/AdminProfile">My Account</Link>
               </p>
-              <p onClick={Profile} style={{ cursor: "pointer" }}>
-                Amit Prajapati
-              </p>
-              <ul className="list-unstyled ">
-                <li
-                  onClick={category}
-                  style={{ cursor: "pointer" }}
-                  className="m-1"
-                >
-                  Category
+
+              <ul className="list-unstyled">
+                <li className="m-2">
+                  <Link to="/admin/category">Category</Link>
                 </li>
-                <li
-                  onClick={subCategory}
-                  style={{ cursor: "pointer" }}
-                  className="m-1"
-                >
-                  Sub Category
+                <li className="m-2">
+                  <Link to="/admin/subcategory">Sub Category</Link>
                 </li>
-                <li
-                  onClick={uplodProduct}
-                  style={{ cursor: "pointer" }}
-                  className="m-1"
-                >
-                  Uplod Product
+                <li className="m-2">
+                  <Link to="/admin/upload-product">Upload Product</Link>
                 </li>
-                <li style={{ cursor: "pointer" }} className="m-1">
-                  Product
+                <li className="m-2">
+                  <Link to="/admin/products">Products</Link>
                 </li>
-                <li style={{ cursor: "pointer" }} className="m-1">
-                  My Order
+                <li className="m-2">
+                  <Link to="/admin/orders">Orders</Link>
                 </li>
-                <li style={{ cursor: "pointer" }} className="m-1">
-                  Save Address
+                <li className="m-2">
+                  <Link to="/admin/address">Saved Address</Link>
                 </li>
-                <li style={{ cursor: "pointer" }} className="m-1">
-                  Log Out
+                <li className="m-2">
+                  <Link to="/logout">Logout</Link>
                 </li>
               </ul>
             </div>
           </Col>
 
-          {/* RIGHT SIDE FORM */}
+          {/* RIGHT SIDE CONTENT */}
           <Col md={10}>
-            {ShowProfile && <ProfilePage/>}
-
-            {/* Category */}
-
-            {ShowCategory && <Category/>}
-
-            {/* Sub Category*/}
-            {ShowSubCategory && <SubCategory/>}
-
-            {/* Upload Product */}
-
-            {ShowUplod && <UplodProductPage/>}
-            <link rel="stylesheet" href="" />
-            <link rel="stylesheet" href="" />
-            
+            <Outlet />
           </Col>
         </Row>
       </Container>

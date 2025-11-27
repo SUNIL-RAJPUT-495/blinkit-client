@@ -9,14 +9,14 @@ import { FaLinkedinIn } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 export const Footer = () => {
-  const navigate = useNavigate();
+const navigate = useNavigate();
 const linkStyle = {
   fontSize: "14px",
   color: "rgba(121, 121, 121, 1)",
   textDecoration: "none",
 };
 const HandelClick = ()=>{
-  navigate("/AdminPage")
+  navigate("/admin")
 }
 
   return (
