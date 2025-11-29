@@ -13,7 +13,7 @@ export const AdminProfile = () => {
 
   const fileInputRef = useRef(null);
 
-  const userId = "67abc123xyz"; // temporary
+  const userId = "65a4c3d2e1f0a9b8c7d6e5f4"; // temporary
 
   // -------------------------------
   // 1️⃣ LOAD PROFILE
@@ -25,7 +25,7 @@ const loadProfile = async () => {
   }
 
   try {
-    const res = await axios.get(`/admin/${userId}`);
+    const res = await axios.get(`/api/admin/${userId}`);
 
     if (!res.data.success) return;
 
@@ -88,7 +88,7 @@ useEffect(() => {
         fd.append("profilePic", selectedFile); // MUST MATCH backend
       }
 
-      const res = await axios.put(`/admin/${userId}`, fd);
+      const res = await axios.put(`/api/admin/${userId}`, fd);
 
       if (res.data.success) {
         alert("Profile Updated Successfully!");
