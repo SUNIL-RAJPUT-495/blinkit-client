@@ -13,30 +13,30 @@ export const AdminLayout = () => {
           <Col md={2} className="border-end">
             <div>
               <p className="fw-bold">
-                <Link to="/admin/AdminProfile">My Account</Link>
+                <Link className="text-black text-decoration-none" to="/admin/AdminProfile">My Account</Link>
               </p>
 
-              <ul className="list-unstyled">
+              <ul className="list-unstyled" >
                 <li className="m-2">
-                  <Link to="/admin/category">Category</Link>
+                  <Link className="text-black text-decoration-none"  to="/admin/category">Category</Link>
                 </li>
                 <li className="m-2">
-                  <Link to="/admin/subcategory">Sub Category</Link>
+                  <Link className="text-black text-decoration-none"  to="/admin/subcategory">Sub Category</Link>
                 </li>
                 <li className="m-2">
-                  <Link to="/admin/upload-product">Upload Product</Link>
+                  <Link className="text-black text-decoration-none"  to="/admin/upload-product">Upload Product</Link>
                 </li>
                 <li className="m-2">
-                  <Link to="/admin/products">Products</Link>
+                  <Link className="text-black text-decoration-none"  to="/admin/products">Products</Link>
                 </li>
                 <li className="m-2">
-                  <Link to="/admin/orders">Orders</Link>
+                  <Link className="text-black text-decoration-none"  to="/admin/orders">Orders</Link>
                 </li>
                 <li className="m-2">
-                  <Link to="/admin/address">Saved Address</Link>
+                  <Link className="text-black text-decoration-none"  to="/admin/address">Saved Address</Link>
                 </li>
                 <li className="m-2">
-                  <Link to="/logout">Logout</Link>
+                  <Link className="text-black text-decoration-none"  to="/logout">Logout</Link>
                 </li>
               </ul>
             </div>

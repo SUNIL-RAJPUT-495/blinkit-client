@@ -1,71 +1,86 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { Container, Row, Col, Modal } from "react-bootstrap";
-import axios from "axios";
+import Axios from "../../../utils/Axios";
+import SummaryApi from "../../../common/SummaryApi";
 
 export const Category = () => {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [categoryImagePreview, setCategoryImagePreview] = useState(null);
-  const [categoryName, setCategoryName] = useState("");
-  const [categoryImage, setCategoryImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
-  const [categories, setCategories] = useState([]);
+  const [data, setData] = useState({
+    name: "",
+    image: "",
+  });
 
-  const fileInputRef = useRef(null);
-
-  const loadCategories = async () => {
-    try {
-      const res = await axios.get("http://localhost:8080/category");
-      setCategories(res.data.data);
-    } catch (err) {
-      console.log("Error loading categories", err);
-    }
+  // Handle Text Input
+  const handlOnChange = (e) => {
+    const { name, value } = e.target;
+    setData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
+  // Handle Image Upload
+  const handleUploadCategoryImage = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setCategoryImage(file);
-      setCategoryImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  const handleAddCategory = async (e) => {
-    e.preventDefault();
-
-    if (!categoryName || !categoryImage) {
-      return alert("Please Enter Name & Image");
-    }
+    // Image Preview
+    setCategoryImagePreview(URL.createObjectURL(file));
 
     const formData = new FormData();
-    formData.append("name", categoryName);
-    formData.append("image", categoryImage);
+    formData.append("image", file);
 
     try {
-      await axios.post("http://localhost:8080/category", formData, {
+      setUploading(true);
+      const response = await Axios({
+        url: SummaryApi.uploadImage.url,
+        method: SummaryApi.uploadImage.method,
+        data: formData,
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setShowCategoryModal(false);
-      setCategoryName("");
-      setCategoryImage(null);
-      setCategoryImagePreview(null);
+      const uploadedUrl = response.data?.data?.url;
 
-      loadCategories();
-    } catch (err) {
-      console.log("Category Add Failed", err);
+      setData((prev) => ({
+        ...prev,
+        image: uploadedUrl || "",
+      }));
+    } catch (error) {
+      console.error("Image Upload Failed:", error);
+      alert("Image upload failed. Try again.");
+    } finally {
+      setUploading(false);
     }
   };
 
-  const handleDelete = async (id) => {
+  // Submit Category
+  const handlesubmit = async (e) => {
+    e.preventDefault();
+
+    if (!data.name || !data.image) {
+      alert("Please fill all fields!");
+      return;
+    }
+
     try {
-      await axios.delete(`http://localhost:8080/category/${id}`);
-      loadCategories();
-    } catch (err) {
-      console.log("Delete failed", err);
+      const res = await Axios({
+        url: SummaryApi.addCategory.url,
+        method: SummaryApi.addCategory.method,
+        data: data,
+      });
+
+      alert("Category Added Successfully!");
+
+      // Reset Form
+      setShowCategoryModal(false);
+      setCategoryImagePreview(null);
+      setData({ name: "", image: "" });
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong!");
     }
   };
 
@@ -75,8 +90,9 @@ export const Category = () => {
         <Container>
           <Row>
             <Col>
-              <div className="d-flex justify-content-between border-bottom">
+              <div className="d-flex justify-content-between border-bottom shadow-md">
                 <p className="fw-bold">Category</p>
+
                 <button
                   onClick={() => setShowCategoryModal(true)}
                   style={{
@@ -89,21 +105,26 @@ export const Category = () => {
                 </button>
               </div>
 
-              {/* Add Category Modal */}
-              <Modal show={showCategoryModal} onHide={() => setShowCategoryModal(false)} centered>
+              {/* Modal */}
+              <Modal
+                show={showCategoryModal}
+                onHide={() => setShowCategoryModal(false)}
+                centered
+              >
                 <Modal.Header closeButton>
                   <Modal.Title>Add Category</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
-                  <form onSubmit={handleAddCategory}>
+                  <form onSubmit={handlesubmit}>
                     <label>Name</label>
                     <input
                       type="text"
                       placeholder="Enter Category name"
                       className="w-100 border-0 bg-light p-2 rounded"
-                      value={categoryName}
-                      onChange={(e) => setCategoryName(e.target.value)}
+                      value={data.name}
+                      name="name"
+                      onChange={handlOnChange}
                     />
 
                     <div className="d-flex align-items-center mt-3">
@@ -119,10 +140,16 @@ export const Category = () => {
                           <img
                             src={categoryImagePreview}
                             alt=""
-                            style={{ objectFit: "cover", height: "150px", width: "150px" }}
+                            style={{
+                              objectFit: "cover",
+                              height: "150px",
+                              width: "150px",
+                            }}
                           />
                         ) : (
-                          <span style={{ fontSize: "18px", color: "#666" }}>Image</span>
+                          <span style={{ fontSize: "18px", color: "#666" }}>
+                            Image
+                          </span>
                         )}
                       </div>
 
@@ -135,58 +162,27 @@ export const Category = () => {
                           cursor: "pointer",
                         }}
                       >
-                        Upload Image
+                        {uploading ? "Uploading..." : "Upload Image"}
                       </label>
                     </div>
 
                     <input
                       id="imageUpload"
                       type="file"
-                      ref={fileInputRef}
-                      onChange={handleImageChange}
+                      accept="image/*"
+                      onChange={handleUploadCategoryImage}
                       className="d-none"
                     />
 
-                    <button type="submit" className="w-100 border-0 fw-bold p-2 mt-3">
+                    <button
+                      type="submit"
+                      className="w-100 border-0 fw-bold p-2 mt-3"
+                    >
                       Add Category
                     </button>
                   </form>
                 </Modal.Body>
               </Modal>
-
-              {/* CATEGORY LIST */}
-              <Container className="mt-4">
-                <Row>
-                  {categories.map((cat) => (
-                    <Col md={3} key={cat._id} className="mb-4">
-                      <div className="border p-2 rounded" style={{ width: "140px" }}>
-                        <div className="d-flex justify-content-center">
-                          <img
-                            src={`http://localhost:8080/uploads/${cat.image}`}
-                            style={{ height: "100px", width: "100px", objectFit: "contain" }}
-                            alt=""
-                          />
-                        </div>
-
-                        <p className="text-center fw-bold mt-1">{cat.name}</p>
-
-                        <div className="d-flex justify-content-between">
-                          <button className="border-0 px-2 bg-success text-white rounded">
-                            Edit
-                          </button>
-
-                          <button
-                            onClick={() => handleDelete(cat._id)}
-                            className="border-0 px-2 bg-danger text-white rounded"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    </Col>
-                  ))}
-                </Row>
-              </Container>
             </Col>
           </Row>
         </Container>
