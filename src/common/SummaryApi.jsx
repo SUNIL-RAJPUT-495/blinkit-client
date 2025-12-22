@@ -55,6 +55,13 @@ const SummaryApi = {
     url: baseURL + "/api/subcategory/delete-subcategory", // + /:id in call
     method: "delete",
   },
+
+  // product 
+
+  addProduct:{
+    url:baseURL + "/api/product/add-product",
+    method:"post"
+  }
 };
 
 export default SummaryApi;

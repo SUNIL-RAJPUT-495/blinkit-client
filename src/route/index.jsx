@@ -6,7 +6,7 @@ import { LoginPage } from "../pages/customer/LoginPage.jsx";
 import { AdminLayout } from "../layout/AdminLayout.jsx";
 import {AdminProfile} from "../pages/admin/Profile/AdminProfile.jsx";
 import {SubCategory} from "../pages/admin/SubCategory/SubCategory.jsx";
-import {UplodProductPage} from "../pages/admin/Products/UplodProductPage.jsx";
+import {UploadProductPage} from "../pages/admin/Products/UplodProductPage.jsx";
 import {Category} from "../pages/admin/Categories/Category.jsx";
 import { Products } from "../pages/admin/Products/Products.jsx";
 import {Register} from "../pages/Auth/Register.jsx"
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
       {path:"AdminProfile",element:<AdminProfile/>},
       { path: "category", element: <Category /> },
       { path: "subcategory", element: <SubCategory /> },
-      { path: "upload-product", element: <UplodProductPage /> },
+      { path: "upload-product", element: <UploadProductPage /> },
       {path:"products", element:<Products/>}
     ]
   }
