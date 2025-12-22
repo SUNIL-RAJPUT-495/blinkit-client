@@ -7,8 +7,17 @@ const SummaryApi = {
     method: "post",
   },
 
+  // image upload
+
+
   uploadImage: {
     url: baseURL + "/api/file/upload",
+    method: "post",
+  },
+
+
+   productImage: {
+    url: baseURL + "/api/file/upload-product",
     method: "post",
   },
 
@@ -61,6 +70,20 @@ const SummaryApi = {
   addProduct:{
     url:baseURL + "/api/product/add-product",
     method:"post"
+  },
+
+  getProduct:{
+    url:baseURL+"/api/product/getAllProducts",
+    method:"get"
+  }
+  ,
+  deleteProduct:{
+    url:baseURL+ "/api/product/delet-product",
+    method:'delete'
+  },
+  editProduct:{
+    url:baseURL + "/api/product/edit-Product",
+    method:"put"
   }
 };
 

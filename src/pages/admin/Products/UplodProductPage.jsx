@@ -1,23 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Image } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
 import Axios from "../../../utils/Axios";
 import SummaryApi from "../../../common/SummaryApi";
 import { fetchCategories, fetchSubCategory } from "../../../utils/api";
 import { MdCloudUpload } from "react-icons/md";
 
 export const UploadProductPage = () => {
+  const MAX_IMAGES = 5;
+  const inputRef = useRef(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const productToEdit = location.state?.product;
+
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
-  const [images, setImages] = useState([]); // File objects
-  const [imagePreviews, setImagePreviews] = useState([]); // Preview URLs
-  const inputRef = useRef(null);
-  const MAX_IMAGES = 5;
+  const [imagePreviews, setImagePreviews] = useState([]);
 
   const [form, setForm] = useState({
+    _id: "",
     name: "",
     description: "",
     unit: "",
-    image: [], // Uploaded image URLs
+    image: [],
     stock: "",
     price: "",
     discount: "",
@@ -47,86 +52,76 @@ export const UploadProductPage = () => {
     getSubCategories();
   }, []);
 
-  const focusFileInput = () => inputRef.current.click();
+  // Prefill form when editing
+  useEffect(() => {
+    if (productToEdit) {
+      setForm({
+        _id: productToEdit._id,
+        name: productToEdit.name,
+        description: productToEdit.description,
+        unit: productToEdit.unit,
+        image: productToEdit.image || [],
+        stock: productToEdit.stock,
+        price: productToEdit.price,
+        discount: productToEdit.discount,
+        category: productToEdit.category?._id || "",
+        subCategory: productToEdit.subCategory?._id || "",
+      });
+      setImagePreviews(productToEdit.image || []);
+    }
+  }, [productToEdit]);
 
-  // Handle file selection
+  const focusFileInput = () => inputRef.current?.click();
+
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  // Upload images
   const handleUploadImage = async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
-
-    if (files.length + images.length > MAX_IMAGES) {
+    if (files.length + imagePreviews.length > MAX_IMAGES) {
       alert(`Maximum ${MAX_IMAGES} images allowed`);
       return;
     }
 
-    // Generate previews
-    const previews = files.map((file) => URL.createObjectURL(file));
-    setImagePreviews((prev) => [...prev, ...previews]);
-    setImages((prev) => [...prev, ...files]);
-
-    // Upload files to backend
-    const uploadedUrls = [];
     for (let file of files) {
+      setImagePreviews((prev) => [...prev, URL.createObjectURL(file)]);
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("productImages", file);
       formData.append("folder", `blinkit/product/${form.name || "default"}`);
 
       try {
-        const res = await Axios({
-          url: SummaryApi.uploadImage.url,
-          method: SummaryApi.uploadImage.method,
-          data: formData,
+        const res = await Axios.post(SummaryApi.productImage.url, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-
-        if (res.data?.data?.url) {
-          uploadedUrls.push(res.data.data.url);
-        }
+        setForm((prev) => ({ ...prev, image: [...prev.image, ...res.data.data] }));
       } catch (err) {
-        console.error("Image upload failed:", err);
+        console.error("Upload failed:", err.response?.data || err.message);
         alert("Image upload failed");
       }
     }
-
-    // Save uploaded URLs in form state
-    setForm((prev) => ({
-      ...prev,
-      image: [...prev.image, ...uploadedUrls],
-    }));
-
-    e.target.value = ""; // reset input for re-upload
+    e.target.value = "";
   };
 
-  // Handle form field change
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  // Submit product
+  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formData = new FormData();
-
-      Object.keys(form).forEach((key) => {
-        if (Array.isArray(form[key])) {
-          form[key].forEach((val) => formData.append(key, val));
-        } else {
-          formData.append(key, form[key]);
-        }
-      });
-
-      await Axios({
-        url: SummaryApi.addProduct.url,
-        method: SummaryApi.addProduct.method,
-        data: formData,
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      alert("Product added successfully");
-
-      // Reset form
+      if (form._id) {
+        await Axios.put(`${SummaryApi.editProduct.url}/${form._id}`, form, {
+          headers: { "Content-Type": "application/json" },
+        });
+        alert("Product updated successfully");
+      } else {
+        await Axios.post(SummaryApi.addProduct.url, form, {
+          headers: { "Content-Type": "application/json" },
+        });
+        alert("Product added successfully");
+      }
       setForm({
+        _id: "",
         name: "",
         description: "",
         unit: "",
@@ -137,152 +132,115 @@ export const UploadProductPage = () => {
         category: "",
         subCategory: "",
       });
-      setImages([]);
       setImagePreviews([]);
-      if (inputRef.current) inputRef.current.value = "";
+      navigate("/admin/products");
     } catch (err) {
       console.error(err);
-      alert("Failed to add product");
+      alert("Failed to submit product");
     }
   };
 
   return (
     <Container className="mt-4">
-      <Row>
+      <Row className="justify-content-center">
         <Col>
-          <h4 className="fw-bold border-bottom pb-2">Upload Product</h4>
+          <h4 className="fw-bold border-bottom pb-2 mb-3">
+            {form._id ? "Edit Product" : "Upload Product"}
+          </h4>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-2">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
 
-          <form onSubmit={handleSubmit}>
-            <label>Name</label>
-            <input
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              className="w-100 p-2 bg-light border-0 rounded"
-              required
-            />
+            <Form.Group className="mb-2">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                type="text"
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
 
-            <label className="mt-2">Description</label>
-            <input
-              type="text"
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              className="w-100 p-2 bg-light border-0 rounded"
-              required
-            />
+            <Form.Group className="mb-2">
+              <Form.Label>Images</Form.Label>
+              <Form.Control type="file" accept="image/*" hidden ref={inputRef} onChange={handleUploadImage} />
+              <div
+                className="bg-light rounded d-flex align-items-center justify-content-center flex-column mb-2"
+                style={{ height: "120px", cursor: "pointer" }}
+                onClick={focusFileInput}
+              >
+                {imagePreviews.length === 0 ? (
+                  <div className="text-center">
+                    <MdCloudUpload size={40} />
+                    <p>Upload images</p>
+                  </div>
+                ) : (
+                  <div className="d-flex gap-2">
+                    {imagePreviews.map((img, idx) => (
+                      <Image key={idx} src={img} rounded style={{ width: 60, height: 60, objectFit: "cover" }} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Form.Group>
 
-            <label className="mt-2">Images</label>
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              ref={inputRef}
-              hidden
-              onChange={handleUploadImage}
-            />
-            <div
-              onClick={focusFileInput}
-              className="bg-light rounded d-flex align-items-center justify-content-center flex-column"
-              style={{ height: "120px", cursor: "pointer" }}
-            >
-              {imagePreviews.length === 0 ? (
-                <div className="d-flex flex-column align-items-center justify-content-center">
-                  <MdCloudUpload size={40} />
-                  <p>Upload images</p>
-                </div>
-              ) : (
-                <div className="d-flex gap-2">
-                  {imagePreviews.map((img, idx) => (
-                    <div key={idx} style={{ width: "60px", height: "60px" }}>
-                      <img
-                        src={img}
-                        alt=""
-                        className="w-100 h-100 object-fit-cover rounded"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <Form.Group className="mb-2">
+              <Form.Label>Category</Form.Label>
+              <Form.Select name="category" value={form.category} onChange={handleChange} required>
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
 
-            <label className="mt-2">Category</label>
-            <select
-              name="category"
-              value={form.category}
-              onChange={handleChange}
-              className="form-control mb-2"
-              required
-            >
-              <option value="">Select Category</option>
-              {categories.map((cat) => (
-                <option key={cat._id} value={cat._id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+            <Form.Group className="mb-2">
+              <Form.Label>Sub Category</Form.Label>
+              <Form.Select name="subCategory" value={form.subCategory} onChange={handleChange} required>
+                <option value="">Select Sub Category</option>
+                {subCategories.map((sub) => (
+                  <option key={sub._id} value={sub._id}>
+                    {sub.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
 
-            <label className="mt-2">Sub Category</label>
-            <select
-              name="subCategory"
-              value={form.subCategory}
-              onChange={handleChange}
-              className="form-control mb-2"
-              required
-            >
-              <option value="">Select Sub Category</option>
-              {subCategories.map((sub) => (
-                <option key={sub._id} value={sub._id}>
-                  {sub.name}
-                </option>
-              ))}
-            </select>
+            <Form.Group className="mb-2">
+              <Form.Label>Unit</Form.Label>
+              <Form.Control type="text" name="unit" value={form.unit} onChange={handleChange} />
+            </Form.Group>
 
-            <label className="mt-2">Unit</label>
-            <input
-              type="text"
-              name="unit"
-              value={form.unit}
-              onChange={handleChange}
-              className="w-100 p-2 bg-light border-0 rounded"
-            />
+            <Form.Group className="mb-2">
+              <Form.Label>Stock</Form.Label>
+              <Form.Control type="number" name="stock" value={form.stock} onChange={handleChange} />
+            </Form.Group>
 
-            <label className="mt-2">Stock</label>
-            <input
-              type="number"
-              name="stock"
-              value={form.stock}
-              onChange={handleChange}
-              className="w-100 p-2 bg-light border-0 rounded"
-            />
+            <Form.Group className="mb-2">
+              <Form.Label>Price</Form.Label>
+              <Form.Control type="number" name="price" value={form.price} onChange={handleChange} />
+            </Form.Group>
 
-            <label className="mt-2">Price</label>
-            <input
-              type="number"
-              name="price"
-              value={form.price}
-              onChange={handleChange}
-              className="w-100 p-2 bg-light border-0 rounded"
-            />
+            <Form.Group className="mb-3">
+              <Form.Label>Discount</Form.Label>
+              <Form.Control type="number" name="discount" value={form.discount} onChange={handleChange} />
+            </Form.Group>
 
-            <label className="mt-2">Discount</label>
-            <input
-              type="number"
-              name="discount"
-              value={form.discount}
-              onChange={handleChange}
-              className="w-100 p-2 bg-light border-0 rounded"
-            />
-
-            <button
-              type="submit"
-              className="w-100 mt-3 p-2 fw-bold"
-              style={{ background: "yellow" }}
-            >
-              Submit
-            </button>
-          </form>
+            <Button type="submit" variant="warning" className="w-100 fw-bold">
+              {form._id ? "Update Product" : "Add Product"}
+            </Button>
+          </Form>
         </Col>
       </Row>
     </Container>
