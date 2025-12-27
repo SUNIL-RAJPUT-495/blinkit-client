@@ -17,7 +17,7 @@ export const fetchCategories = async () => {
 };
 
 
-//  fetch categories 
+//  fetch Subcategories 
 
 export const fetchSubCategory = async () => {
   try {
@@ -32,3 +32,20 @@ export const fetchSubCategory = async () => {
     return [];
   }
 };
+
+
+// fetch Product
+
+export const fetchProduct = async ()=>{
+  try{
+    const res = await Axios({
+      url: SummaryApi.getProduct.url,
+      method: SummaryApi.getProduct.method
+    });
+    
+    if (res.data.success)return res.data.data;
+    return[];
+  } catch (err){
+    console.error("Falior to fatch product", err)
+  }
+}

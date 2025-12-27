@@ -2,20 +2,40 @@ import React from "react";
 import axios from "axios";
 import { Container, Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { fetchCategories } from "../../utils/api";
+import { fetchCategories,fetchSubCategory } from "../../utils/api";
+import { fetchProduct } from "../../utils/api"
 
 
 
 export const Home = () => {
   const [Categories, setCategories] = useState([])
-   const newCategories = Array.isArray(Categories) ? Categories : [];
+  const [product, setProduct] = useState([])
+  const [Subcategories,setSubcategories] = useState([])
+
+
+  const getProduct = async () => {
+    const data = await fetchProduct();
+    setProduct(data)
+  }
+
   const getCategories = async () => {
     const data = await fetchCategories();
     setCategories(data);
   };
+
+  const getSubCategory =async ()=>{
+    const res = await fetchSubCategory();
+    setSubcategories(res)
+  }
   useEffect(() => {
     getCategories();
+    getProduct();
+    getSubCategory();
   }, []);
+
+  console.log("product is :", product)
+
+
 
   return (
     <>
@@ -61,7 +81,7 @@ export const Home = () => {
         </Row>
         <Row>
           <Col>
-            {newCategories.map((p) => (
+            {Categories.map((p) => (
               <a href="#" key={p.id} className="p-2">
                 <img src={p.image} alt="all" style={{ height: "150px" }} />
               </a>
@@ -72,12 +92,18 @@ export const Home = () => {
       </Container>
       <Container>
         <Row>
-          {/* <Col>
-            <div className="row">
-              {products.map((item, index) => (
-                <div key={index}>
+          <Col>
+            {Subcategories.map((subCat)=>(
+              
+              <div className=" d-flex ">
+                <h2>{subCat.name}</h2>
+                
+              
+              {product.filter(item => item.subCategory?.[0]?._id === subCat._id).map((item) => (
+                <div key={item._id} className="d-flex ">
+                  
                   <div
-                    className="border rounded shadow mt-4 mb-5 d-flex justify-content-center "
+                    className="border rounded shadow mt-4 mb-5 d-flex justify-content-center"
                     style={{ height: "280px", width: "190px" }}
                   >
                     <div className="p-1">
@@ -91,39 +117,38 @@ export const Home = () => {
                       >
                         <img
                           className="object-fit-cover h-100 w-100"
-                          src={item.image} // ⬅ Admin se aayi image
+                          src={item.image?.[0]}
                           alt={item.name}
                         />
                       </div>
 
                       <div className="p-2 m-0">
                         <p className="fw-bold mb-1">{item.name}</p>
-                        <p className="mb-1">{item.quantity} pcs</p>
+                        <p className="mb-1">{item.unit} pcs</p>
                       </div>
 
                       <div className="d-flex justify-content-between p-2 m-0">
-                        <span>{item.price}</span>
-                        <span>
-                          <button
-                            style={{
-                              height: "30px",
-                              width: "60px",
-                              backgroundColor: "rgba(231, 253, 231, 1)",
-                              border: "1px solid rgba(1, 91, 24, 1)",
-                              color: "rgba(1, 91, 3, 1)",
-                              borderRadius: "10px",
-                            }}
-                          >
-                            add
-                          </button>
-                        </span>
+                        <span>₹{item.price}</span>
+                        <button
+                          style={{
+                            height: "30px",
+                            width: "60px",
+                            backgroundColor: "rgba(231, 253, 231, 1)",
+                            border: "1px solid rgba(1, 91, 24, 1)",
+                            color: "rgba(1, 91, 3, 1)",
+                            borderRadius: "10px",
+                          }}
+                        >
+                          add
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
-            </div>
-          </Col> */}
+            </div>))
+}
+          </Col>
         </Row>
       </Container>
     </>
