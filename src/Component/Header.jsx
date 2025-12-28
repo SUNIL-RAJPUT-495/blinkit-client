@@ -3,6 +3,7 @@ import { Search } from "../Component/Search";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/logo.png"
 
 export const Header = () => {
   const Navigation = useNavigate();
@@ -17,8 +18,8 @@ export const Header = () => {
       >
         {/* logo section */}
         <Link to="/" className=" h-100 d-flex justify-content-center align-items-center">
-          <img
-            src="/417997b1-51c7-4d8a-a356-cdce2720102a.svg"
+          <img style={{height:"40px"}}
+            src={logo}
             alt="Blinkit logo"
           />
         </Link>

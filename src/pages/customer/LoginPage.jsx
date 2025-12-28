@@ -3,6 +3,7 @@ import { MdKeyboardBackspace } from "react-icons/md";
 import { Link , useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
+import loginLogo from "../../assets/app_logo.svg"
 
 export const LoginPage = () => {
 
@@ -50,7 +51,7 @@ export const LoginPage = () => {
 
       <Modal.Header className="border-0 justify-content-center mb-0 ">
         <Modal.Title>
-          <img src="/app_logo.svg" alt="app logo" height="60" />
+          <img src={loginLogo} alt="app logo" height="60" />
         </Modal.Title>
       </Modal.Header>
 
