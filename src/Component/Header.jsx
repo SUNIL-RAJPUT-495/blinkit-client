@@ -1,64 +1,56 @@
 import "../css/header.css";
 import { Search } from "../Component/Search";
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo.png"
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import logo from "../assets/logo.png";
+import { useSelector } from "react-redux";
 
 export const Header = () => {
-  const Navigation = useNavigate();
-  const reDirectiToLoginPage = () => {
-    Navigation("/Login");
+  const cartItems = useSelector((state) => state.cart.items || []);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Total number of items (sum of quantities)
+  const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+  const openCart = () => {
+    navigate("/cart", { state: { from: location.pathname } });
   };
+   const totalPrice = cartItems.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+    );
+
   return (
-    <header className="border-bottom sticky-top">
+    <header className="border-bottom sticky-top bg-white">
       <div
-        className="d-flex justify-content-center align-items-center gap-4 bg-white"
+        className="d-flex justify-content-center align-items-center gap-4"
         style={{ height: "86px" }}
       >
-        {/* logo section */}
-        <Link to="/" className=" h-100 d-flex justify-content-center align-items-center">
-          <img style={{height:"40px"}}
-            src={logo}
-            alt="Blinkit logo"
-          />
+        <Link to="/">
+          <img src={logo} alt="logo" style={{ height: "40px" }} />
         </Link>
-        <div
-          className="border-end me-4"
-          style={{ height: "100%", width: "2px" }}
-        ></div>
-        <div className="d-flex flex-column align-items-center ">
-          <p className="fw-bold" style={{ margin: "0", fontSize: "18px" }}>
-            Delivery in 9 minutes
-          </p>
 
-          
-        </div>
-        {/* search section */}
-        <div>
-          <Search />
-        </div>
-        <div>
-          <button
-            onClick={reDirectiToLoginPage}
-            className="border-0 bg-white me-5"
-          >
-            Login
-          </button>
-          <span
-            className=" rounded text-white fw-bold "
-            style={{
-              backgroundColor: "rgb(238, 236, 236)",
-              padding: "13px",
-              fontSize: "14px",
-            }}
-          >
-            <MdOutlineShoppingCart
-              style={{ fontSize: "28px", marginRight: "5px" }}
-            />
-            My cart
-          </span>
-        </div>
+        <Search />
+
+        <button onClick={() => alert("Login flow")} className="border-0 bg-white">
+          Login
+        </button>
+
+        <span
+          onClick={openCart}
+          className="rounded fw-bold"
+          style={{
+            backgroundColor: totalItems > 0 ? "green" : "#eee",
+            padding: "13px",
+            cursor: "pointer",
+            color: totalItems > 0 ? "white" : "black",
+          }}
+        >
+         <span><MdOutlineShoppingCart style={{ fontSize: "28px" }} /></span> 
+         <span> {totalItems > 0 ? ` My Cart ${totalItems} items` : " My Cart"}</span>
+           <p>{totalPrice}</p>
+        </span>
       </div>
     </header>
   );

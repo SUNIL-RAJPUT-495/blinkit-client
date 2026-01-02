@@ -11,7 +11,7 @@ import {Category} from "../pages/admin/Categories/Category.jsx";
 import { Products } from "../pages/admin/Products/Products.jsx";
 import {Register} from "../pages/Auth/Register.jsx"
 import {OtpInput} from "../pages/customer/OtpInput.jsx"
-
+import { Cart } from "../pages/customer/Cart.jsx";
 
 const router = createBrowserRouter([
   {
@@ -22,7 +22,9 @@ const router = createBrowserRouter([
       { path: "search", element: <Searchpage /> },
       { path: "login", element: <LoginPage />},
       { path:"login/OtpInput",element:<OtpInput/>},
-      {path:"AdminLayout",element:<AdminLayout/>}
+      {path:"AdminLayout",element:<AdminLayout/>},
+      {path: "Register",element:<Register/>},
+      {path:"cart",element:<Cart/>}
     ],
     
   },
@@ -30,12 +32,13 @@ const router = createBrowserRouter([
     path:"/admin",
     element:<AdminLayout/>,
     children:[
-      {path: "Register",element:<Register/>},
+      { index: true, element: <AdminProfile /> },
       {path:"AdminProfile",element:<AdminProfile/>},
       { path: "category", element: <Category /> },
       { path: "subcategory", element: <SubCategory /> },
       { path: "upload-product", element: <UploadProductPage /> },
-      {path:"products", element:<Products/>}
+      {path:"products", element:<Products/>},
+      
     ]
   }
   
