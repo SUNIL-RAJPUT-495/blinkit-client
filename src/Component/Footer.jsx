@@ -197,7 +197,7 @@ const HandelClick = ()=>{
           </Row>
           <Row>
 
-          <div className="d-flex gap-5 mt-3 pt-5 mb-3 border-top align-items-center justify-content-center">
+          <div className="d-flex gap-3 mt-3 pt-5 mb-3 border-top align-items-center justify-content-center">
             <div style={{fontSize:"11px",color:"rgba(121, 121, 121, 1)"}}>
               <MdOutlineCopyright /> Blink Commerce Private Limited, 2016-2025
             </div>

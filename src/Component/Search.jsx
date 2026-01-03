@@ -5,22 +5,24 @@ import { useNavigate } from 'react-router-dom';
 
 export const Search = () => {
   const navigate = useNavigate()
-  const redirectTOSearchPage = ()=>{
+  const redirectTOSearchPage = () => {
     navigate("/Search")
   }
   return (
     <>
       <div onClick={redirectTOSearchPage}
-        className="d-flex  p-2 align-items-center gap-2"
+        className="d-flex  p-2 align-items-center gap-2 mb-2"
         style={{
-          backgroundColor: "rgba(248, 245, 245, 1)",
-          width: "700px",
+          maxWidth: "700px",  
+          width: "100%",      
           height: "45px",
+          backgroundColor: "rgba(248, 245, 245, 1)",
           color: "#6c757d",
-          border:"1px solid rgba(230, 229, 229, 1) ",
-          borderRadius:"10px",
-          cursor:"text"
+          border: "1px solid rgba(230, 229, 229, 1)",
+          borderRadius: "10px",
+          cursor: "text"
         }}
+
       >
         <div>
           <FiSearch

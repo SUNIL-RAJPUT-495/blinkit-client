@@ -1,40 +1,42 @@
 import React from "react";
 import { MdKeyboardBackspace } from "react-icons/md";
-import { Link , useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
 import loginLogo from "../../assets/app_logo.svg"
+import loginimage from "../../assets/loginpage.jpg"
 
 export const LoginPage = () => {
 
   const navigate = useNavigate();
   const handleClose = () => {
-    navigate("/");};
-    const [Number,setNumber] =useState("");
-    
-    const [User,SetUser]=useState("");
-   
-  const handleClick = async(e)=>{
-  e.preventDefault();
-   const res= await fetch("http://localhost:8080/api/user/register",{
-      method :"POST",
+    navigate("/");
+  };
+  const [Number, setNumber] = useState("");
+
+  const [User, SetUser] = useState("");
+
+  const handleClick = async (e) => {
+    e.preventDefault();
+    const res = await fetch("http://localhost:8080/api/user/register", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body:JSON.stringify({Number})
-      
+      body: JSON.stringify({ Number })
+
     })
-    if(Number.length !== 10){
+    if (Number.length !== 10) {
       console.log("enter correct numberr")
     }
-    else{navigate("/login/OtpInput", { state: { Number } });}
+    else { navigate("/login/OtpInput", { state: { Number } }); }
     const data = await res.json();
     SetUser(data)
-    
+
     console.log(data);
-    
-}
-    
+
+  }
+
   return (
     <Modal
       show
@@ -48,9 +50,11 @@ export const LoginPage = () => {
           <MdKeyboardBackspace />
         </Link>
       </div>
-
+      <div style={{ height: "270px" }}><img src={loginimage} className="h-100 w-100" alt="loginimage" /></div>
       <Modal.Header className="border-0 justify-content-center mb-0 ">
+
         <Modal.Title>
+
           <img src={loginLogo} alt="app logo" height="60" />
         </Modal.Title>
       </Modal.Header>
@@ -72,8 +76,8 @@ export const LoginPage = () => {
             }}
           >
             <span style={{ fontSize: "13px", fontWeight: "700" }}>+91</span>
-            <input 
-            onChange={(e)=>setNumber(e.target.value)}
+            <input
+              onChange={(e) => setNumber(e.target.value)}
               type="tel"
               maxLength="10"
               placeholder="Enter mobile number"
