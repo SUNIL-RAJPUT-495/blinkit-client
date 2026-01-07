@@ -1,5 +1,4 @@
 import { useRef, useState, useEffect } from "react";
-import axios from "../../../axios";
 
 export const AdminProfile = () => {
   const [profileImage, setProfileImage] = useState(null);

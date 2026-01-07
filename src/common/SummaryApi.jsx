@@ -56,12 +56,12 @@ const SummaryApi = {
   },
 
   updateSubCategory: {
-    url: baseURL + "/api/subcategory/update-subcategory", // + /:id in call
+    url: baseURL + "/api/subcategory/update-subcategory",
     method: "put",
   },
 
   deleteSubCategory: {
-    url: baseURL + "/api/subcategory/delete-subcategory", // + /:id in call
+    url: baseURL + "/api/subcategory/delete-subcategory", 
     method: "delete",
   },
 

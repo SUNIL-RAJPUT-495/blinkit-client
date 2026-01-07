@@ -39,7 +39,6 @@ export const Home = () => {
     const cartItem = cartItems.find(i => i._id === id);
     return cartItem ? cartItem.quantity : 0;
   };
-
   return (
     <>
       {/* Banner */}

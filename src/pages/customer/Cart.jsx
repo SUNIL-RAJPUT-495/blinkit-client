@@ -19,12 +19,12 @@ export const Cart = () => {
         0
     );
 
-    // 🔴 CLOSE CART → GO BACK TO PREVIOUS PAGE
+
     const handleClose = () => {
         if (location.state?.from) {
-            navigate(location.state.from); // jahan se khola tha wapas waha
+            navigate(location.state.from); 
         } else {
-            navigate("/"); // fallback Home
+            navigate("/"); 
         }
     };
 
