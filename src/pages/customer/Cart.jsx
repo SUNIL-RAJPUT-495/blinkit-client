@@ -14,7 +14,6 @@ export const Cart = () => {
     const location = useLocation();
     const cartItems = useSelector(state => state.cart.items || []);
 
-    // Screen size detect karne ke liye state
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 767);
 
     useEffect(() => {
@@ -27,12 +26,13 @@ export const Cart = () => {
         (total, item) => total + item.price * item.quantity,
         0
     );
+    const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
     const handleClose = () => {
         if (location.state?.from) {
-            navigate(location.state.from); 
+            navigate(location.state.from);
         } else {
-            navigate("/"); 
+            navigate("/");
         }
     };
 
@@ -43,7 +43,7 @@ export const Cart = () => {
     return (
         <>
             <style>{`
-                /* Desktop Style (Right Sidebar) */
+                /* Desktop Style */
                 .cart-right-modal.modal-dialog {
                     position: fixed !important;
                     right: 0;
@@ -58,9 +58,11 @@ export const Cart = () => {
                     height: 100vh;
                     border-radius: 0;
                     border: none;
+                    display: flex;
+                    flex-direction: column;
                 }
 
-                /* Mobile Style (Full Screen & No Blur) */
+                /* Mobile Style */
                 @media (max-width: 767px) {
                     .cart-right-modal.modal-dialog {
                         max-width: 100% !important;
@@ -70,93 +72,88 @@ export const Cart = () => {
                         left: 0 !important;
                         bottom: 0 !important;
                     }
-                    
-                    /* Backdrop (blur/darkness) ko mobile par hatane ke liye */
-                    .modal-backdrop {
-                        display: none !important;
-                    }
-
-                    .cart-right-modal .modal-content {
-                        height: 100vh !important;
-                        width: 100vw !important;
-                    }
+                    .modal-backdrop { display: none !important; }
                 }
 
-                .cart-items-scroll {
-                    max-height: calc(100vh - 380px); /* Bottom bill ke hisab se scroll adjustment */
+                /* Scrollable Body */
+                .modal-body-scrollable {
+                    flex: 1;
                     overflow-y: auto;
                     scrollbar-width: none;
                 }
-                .cart-items-scroll::-webkit-scrollbar { display: none; }
+                .modal-body-scrollable::-webkit-scrollbar { display: none; }
             `}</style>
 
             <Modal
                 show={true}
                 onHide={handleClose}
                 dialogClassName="cart-right-modal"
-                // Mobile par backdrop "false" rakhein taaki blur na ho
-                backdrop={isMobile ? false : true} 
+                backdrop={isMobile ? false : true}
                 keyboard={true}
                 animation={true}
             >
-                <Modal.Header closeButton className="border-bottom-0">
+                <Modal.Header closeButton className="border-bottom-0 shadow-sm" style={{ zIndex: 10 }}>
                     <Modal.Title className="fw-bold">My Cart</Modal.Title>
                 </Modal.Header>
 
-                <Modal.Body className="px-3">
-                    {/* Delivery Info */}
-                    <div className="d-flex align-items-center border rounded p-3 mb-3" style={{ backgroundColor: "#f8f9fa", borderStyle: "dashed !important" }}>
-                        <div style={{ width: "45px" }}>
-                            <img src={dileverytime} alt="delivery" className="w-100" />
-                        </div>
-                        <div className="ms-3">
-                            <h6 className="fw-bold m-0" style={{ fontSize: "15px" }}>Delivery in 8 minutes</h6>
-                            <p className="m-0 text-muted" style={{ fontSize: "12px" }}>Shipment 1 of 1</p>
-                        </div>
-                    </div>
+                <Modal.Body className="modal-body-scrollable px-3 bg-light">
+                    <div className="bg-white rounded border shadow-sm mb-3 overflow-hidden">
 
-                    {/* Cart Items List */}
-                    <div className="cart-items-scroll">
-                        {cartItems.map(item => (
-                            <div key={item._id} className="d-flex align-items-center justify-content-between mb-4">
-                                <div className="d-flex align-items-center">
-                                    <div className="border rounded p-1" style={{ width: "65px", height: "65px" }}>
-                                        <img
-                                            src={item.image[0]}
-                                            alt={item.name}
-                                            className="w-100 h-100 object-fit-contain"
-                                        />
-                                    </div>
-                                    <div className="ms-3">
-                                        <p className="m-0 fw-bold" style={{ fontSize: "13px", lineHeight: "1.2" }}>{item.name}</p>
-                                        <p className="m-0 text-muted" style={{ fontSize: "12px" }}>{item.unit}</p>
-                                        <p className="m-0 fw-bold" style={{ fontSize: "14px" }}>₹{item.price}</p>
-                                    </div>
-                                </div>
-
-                                <div className="d-flex justify-content-between align-items-center rounded" 
-                                     style={{ backgroundColor: "#27943f", width: "70px", height: "32px", padding: "0 8px" }}>
-                                    <button className="btn btn-sm p-0 text-white border-0 fw-bold" onClick={() => dispatch(removeItem(item._id))}>-</button>
-                                    <span className="text-white fw-bold" style={{ fontSize: "14px" }}>{item.quantity}</span>
-                                    <button className="btn btn-sm p-0 text-white border-0 fw-bold" onClick={() => dispatch(addItem(item))}>+</button>
-                                </div>
+                        <div className="d-flex align-items-center p-3"
+                        >
+                            <div style={{ width: "50px" }}>
+                                <img src={dileverytime} alt="delivery" className="w-100" />
                             </div>
-                        ))}
+                            <div className="ms-3">
+                                <h6 className="fw-bold m-0" style={{ fontSize: "16px" }}>Delivery in 8 minutes</h6>
+                                <p className="m-0 text-muted" style={{ fontSize: "11px" }}>Shipment of {totalItems}</p>
+                            </div>
+                        </div>
+
+                        <div className="p-2">
+                            {cartItems.map((item, index) => (
+                                <div key={item._id}
+                                    className={`d-flex align-items-center justify-content-between p-2 ${index !== cartItems.length - 1 ? 'border-bottom' : ''}`}
+                                    style={{ marginBottom: "10px", marginTop: "10px" }}>
+
+                                    <div className="d-flex align-items-center">
+                                        <div className="border rounded p-1" style={{ width: "60px", height: "60px" }}>
+                                            <img src={item.image[0]} alt={item.name} className="w-100 h-100 object-fit-contain" />
+                                        </div>
+                                        <div className="ms-3">
+                                            <p className="m-0 fw-bold" style={{ fontSize: "13px", lineHeight: "1.2", maxWidth: "150px" }}>
+                                                {item.name}
+                                            </p>
+                                            <p className="m-0 text-muted" style={{ fontSize: "11px" }}>{item.unit}</p>
+                                            <p className="m-0 fw-bold" style={{ fontSize: "14px" }}>₹{item.price}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Counter Buttons */}
+                                    <div className="d-flex justify-content-between align-items-center rounded"
+                                        style={{ backgroundColor: "#27943f", width: "70px", height: "30px", padding: "0 8px" }}>
+                                        <button className="btn btn-sm p-0 text-white border-0 fw-bold" onClick={() => dispatch(removeItem(item._id))}>-</button>
+                                        <span className="text-white fw-bold" style={{ fontSize: "13px" }}>{item.quantity}</span>
+                                        <button className="btn btn-sm p-0 text-white border-0 fw-bold" onClick={() => dispatch(addItem(item))}>+</button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Bill Details */}
-                    <div className="mt-4 pt-3 border-top">
+                    <div className="bg-white rounded p-3 mb-3 shadow-sm">
                         <h6 className="fw-bold mb-3">Bill Details</h6>
                         <div className="d-flex justify-content-between mb-2 text-muted" style={{ fontSize: "13px" }}>
-                            <span><FaClipboardList className="me-1" /> Items total</span>
+                            <span><FaClipboardList className="me-2" /> Items total</span>
                             <span>₹{totalPrice}</span>
                         </div>
                         <div className="d-flex justify-content-between mb-2 text-muted" style={{ fontSize: "13px" }}>
-                            <span><FaBiking className="me-1" /> Delivery charge</span>
+                            <span><FaBiking className="me-2" /> Delivery charge</span>
                             <span className="text-success fw-bold">FREE</span>
                         </div>
                         <div className="d-flex justify-content-between mb-2 text-muted" style={{ fontSize: "13px" }}>
-                            <span><IoBag className="me-1" /> Handling charge</span>
+                            <span><IoBag className="me-2" /> Handling charge</span>
                             <span>₹2</span>
                         </div>
                         <div className="d-flex justify-content-between fw-bold mt-2 pt-2 border-top" style={{ fontSize: "16px" }}>
@@ -164,19 +161,27 @@ export const Cart = () => {
                             <span>₹{totalPrice + 2}</span>
                         </div>
                     </div>
+
+                    {/* Cancellation Policy Section */}
+                    <div className="bg-white rounded p-3 mb-3 shadow-sm">
+                        <h6 className="fw-bold mb-2">Cancellation Policy</h6>
+                        <p className="text-muted m-0" style={{ fontSize: "12px", lineHeight: "1.5" }}>
+                            Orders cannot be cancelled once packed for delivery. In case of unexpected delays, a refund will be provided, if applicable.
+                        </p>
+                    </div>
                 </Modal.Body>
 
-                <Modal.Footer className="border-0 p-3 bg-white">
-                    <Button 
-                        className="w-100 py-3 border-0 d-flex justify-content-between align-items-center" 
-                        style={{ backgroundColor: "#27943f", borderRadius: "12px" }} 
+                <Modal.Footer className="border-0 p-3 bg-white shadow-lg" style={{ zIndex: 10 }}>
+                    <Button
+                        className="w-100 py-3 border-0 d-flex justify-content-between align-items-center"
+                        style={{ backgroundColor: "#27943f", borderRadius: "12px" }}
                         onClick={handelLogin}
                     >
                         <div className="text-start">
                             <h5 className="m-0 fw-bold">₹{totalPrice + 2}</h5>
-                            <small className="opacity-75" style={{ fontSize: "10px" }}>TOTAL</small>
+                            <small className="opacity-75" style={{ fontSize: "14px" }}>TOTAL</small>
                         </div>
-                        <div className="d-flex align-items-center fw-bold fs-5">
+                        <div className="d-flex align-items-center  fs-5">
                             Login to Proceed <GrNext className="ms-2" />
                         </div>
                     </Button>
