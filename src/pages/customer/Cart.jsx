@@ -60,9 +60,10 @@ export const Cart = () => {
                     border: none;
                     display: flex;
                     flex-direction: column;
+                    overflow: hidden;
                 }
 
-                /* Mobile Style */
+                /* Mobile Style Fix */
                 @media (max-width: 767px) {
                     .cart-right-modal.modal-dialog {
                         max-width: 100% !important;
@@ -70,18 +71,31 @@ export const Cart = () => {
                         height: 100% !important;
                         position: fixed !important;
                         left: 0 !important;
-                        bottom: 0 !important;
+                        top: 0 !important;
+                        margin: 0 !important;
                     }
+
+                    .cart-right-modal .modal-content {
+                        /* 100dvh mobile address bar ke sath height fix karta hai */
+                        height: 100dvh !important; 
+                        width: 100vw !important;
+                    }
+                    
                     .modal-backdrop { display: none !important; }
                 }
 
-                /* Scrollable Body */
+                /* Scrollable Body - Ensures Footer stays at bottom */
                 .modal-body-scrollable {
                     flex: 1;
                     overflow-y: auto;
                     scrollbar-width: none;
+                    -webkit-overflow-scrolling: touch; /* Smooth scroll for iOS */
                 }
                 .modal-body-scrollable::-webkit-scrollbar { display: none; }
+                
+                .cart-items-container {
+                    width: 100%;
+                }
             `}</style>
 
             <Modal
@@ -92,32 +106,32 @@ export const Cart = () => {
                 keyboard={true}
                 animation={true}
             >
-                <Modal.Header closeButton className="border-bottom-0 shadow-sm" style={{ zIndex: 10 }}>
+                <Modal.Header closeButton className="border-bottom-0 shadow-sm" style={{ flexShrink: 0, zIndex: 10 }}>
                     <Modal.Title className="fw-bold">My Cart</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body className="modal-body-scrollable px-3 bg-light">
+                    {/* Delivery Info and Items combined in one card */}
                     <div className="bg-white rounded border shadow-sm mb-3 overflow-hidden">
-
-                        <div className="d-flex align-items-center p-3"
-                        >
+                        
+                        <div className="d-flex align-items-center p-3">
                             <div style={{ width: "50px" }}>
                                 <img src={dileverytime} alt="delivery" className="w-100" />
                             </div>
                             <div className="ms-3">
                                 <h6 className="fw-bold m-0" style={{ fontSize: "16px" }}>Delivery in 8 minutes</h6>
-                                <p className="m-0 text-muted" style={{ fontSize: "11px" }}>Shipment of {totalItems}</p>
+                                <p className="m-0 text-muted" style={{ fontSize: "11px" }}>Shipment of {totalItems} items</p>
                             </div>
                         </div>
 
-                        <div className="p-2">
+                        <div className="p-2 border-top">
                             {cartItems.map((item, index) => (
                                 <div key={item._id}
                                     className={`d-flex align-items-center justify-content-between p-2 ${index !== cartItems.length - 1 ? 'border-bottom' : ''}`}
-                                    style={{ marginBottom: "10px", marginTop: "10px" }}>
+                                    style={{ paddingBottom: "15px", paddingTop: "15px" }}>
 
                                     <div className="d-flex align-items-center">
-                                        <div className="border rounded p-1" style={{ width: "60px", height: "60px" }}>
+                                        <div className="border rounded p-1" style={{ width: "60px", height: "60px", backgroundColor: "#fff" }}>
                                             <img src={item.image[0]} alt={item.name} className="w-100 h-100 object-fit-contain" />
                                         </div>
                                         <div className="ms-3">
@@ -142,7 +156,7 @@ export const Cart = () => {
                     </div>
 
                     {/* Bill Details */}
-                    <div className="bg-white rounded p-3 mb-3 shadow-sm">
+                    <div className="bg-white rounded p-3 mb-3 shadow-sm border">
                         <h6 className="fw-bold mb-3">Bill Details</h6>
                         <div className="d-flex justify-content-between mb-2 text-muted" style={{ fontSize: "13px" }}>
                             <span><FaClipboardList className="me-2" /> Items total</span>
@@ -162,26 +176,27 @@ export const Cart = () => {
                         </div>
                     </div>
 
-                    {/* Cancellation Policy Section */}
-                    <div className="bg-white rounded p-3 mb-3 shadow-sm">
-                        <h6 className="fw-bold mb-2">Cancellation Policy</h6>
-                        <p className="text-muted m-0" style={{ fontSize: "12px", lineHeight: "1.5" }}>
+                    {/* Cancellation Policy */}
+                    <div className="bg-white rounded p-3 mb-3 shadow-sm border">
+                        <h6 className="fw-bold mb-2" style={{ fontSize: "14px" }}>Cancellation Policy</h6>
+                        <p className="text-muted m-0" style={{ fontSize: "11px", lineHeight: "1.4" }}>
                             Orders cannot be cancelled once packed for delivery. In case of unexpected delays, a refund will be provided, if applicable.
                         </p>
                     </div>
                 </Modal.Body>
 
-                <Modal.Footer className="border-0 p-3 bg-white shadow-lg" style={{ zIndex: 10 }}>
+                {/* Footer stays at the very bottom */}
+                <Modal.Footer className="border-0 p-3 bg-white shadow-lg" style={{ flexShrink: 0, zIndex: 10 }}>
                     <Button
                         className="w-100 py-3 border-0 d-flex justify-content-between align-items-center"
                         style={{ backgroundColor: "#27943f", borderRadius: "12px" }}
                         onClick={handelLogin}
                     >
-                        <div className="text-start">
+                        <div className="text-start text-white">
                             <h5 className="m-0 fw-bold">₹{totalPrice + 2}</h5>
-                            <small className="opacity-75" style={{ fontSize: "14px" }}>TOTAL</small>
+                            <small className="opacity-75" style={{ fontSize: "11px" }}>TOTAL</small>
                         </div>
-                        <div className="d-flex align-items-center  fs-5">
+                        <div className="d-flex align-items-center text-white fw-bold fs-6">
                             Login to Proceed <GrNext className="ms-2" />
                         </div>
                     </Button>
