@@ -1,8 +1,9 @@
-// src/pages/admin/Auth/AdminLogin.jsx
 import React, { useState } from "react";
+import Axios from "../../../utils/Axios"
 import { Link, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Form, Button, Card, Alert, Image } from "react-bootstrap";
 import blinkitpng from "../../../assets/logo.png";
+import SummaryApi from "../../../common/SummaryApi";
 
 export const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -11,23 +12,42 @@ export const AdminLogin = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!email || !password) {
-      setError("Please enter both email and password");
-      return;
+  if (!email || !password) {
+    setError("Please enter both email and password");
+    return;
+  }
+
+  setError("");
+
+  try {
+    const res = await Axios({
+      url: SummaryApi.AdminLogin.url,
+      method: SummaryApi.AdminLogin.method,
+      data: {
+        email,
+        password,
+      },
+    });
+
+
+    if (res.data?.success) {
+      localStorage.setItem("adminToken", res.data.token);
+      navigate("/admin"); 
+    } else {
+      setError(res.data?.message || "Login failed");
     }
 
-    setError("");
+  } catch (err) {
+    console.error(err);
+    setError(
+      err.response?.data?.message || "Something went wrong. Please try again."
+    );
+  }
+};
 
-    // TODO: Replace with your API call
-    console.log("Email:", email, "Password:", password);
-
-    // Example: on successful login
-    // localStorage.setItem("adminToken", "your_jwt_token");
-    // navigate("/admin");
-  };
 
   return (
     <Container fluid className="min-vh-100 d-flex align-items-center justify-content-center bg-light">

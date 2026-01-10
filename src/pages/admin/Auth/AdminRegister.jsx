@@ -1,11 +1,13 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import SummaryApi from '../../../common/SummaryApi';
+import Axios from '../../../utils/Axios'
 import { toast } from "react-hot-toast";
 import { Container, Row, Col, Card, Form, Button, Alert, Image } from 'react-bootstrap';
 import blinkitpng from "../../../assets/logo.png"
+import { useNavigate } from 'react-router-dom';
 
 export const AdminRegister = () => {
+  const navigate = useNavigate();
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -25,6 +27,7 @@ export const AdminRegister = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Sending Data:", { name: data.name, email: data.email, password: data.password });
 
     if (data.password !== data.confirmPassword) {
       toast.error("Password and confirm password must be same");
@@ -32,7 +35,7 @@ export const AdminRegister = () => {
     }
 
     try {
-      const response = await axios({
+      const response = await Axios({
         method: SummaryApi.Register.method,
         url: SummaryApi.Register.url,
         data: {
@@ -41,13 +44,12 @@ export const AdminRegister = () => {
           password: data.password
         }
       });
+      console.log(response)
+      alert(response.data.message)
 
-      console.log('response', response);
-      toast.success("Registered Successfully!");
-
-      // Optional: reset form
       setData({ name: "", email: "", password: "", confirmPassword: "" });
       setError("");
+      navigate("/admin/emailVerification",{state: { email: data.email }} );
 
     } catch (err) {
       console.error(err);

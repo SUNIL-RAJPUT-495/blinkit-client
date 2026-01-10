@@ -13,7 +13,7 @@ export const AdminLayout = () => {
           <Col md={2} className="border-end">
             <div>
               <p className="fw-bold">
-                <Link className="text-black text-decoration-none" to="/admin/AdminProfile">My Account</Link>
+                <Link className="text-black text-decoration-none" to="/admin/profile">My Account</Link>
               </p>
 
               <ul className="list-unstyled" >
@@ -36,7 +36,7 @@ export const AdminLayout = () => {
                   <Link className="text-black text-decoration-none"  to="/admin/address">Saved Address</Link>
                 </li>
                 <li className="m-2">
-                  <Link className="text-black text-decoration-none"  to="/logout">Logout</Link>
+                  <Link className="text-black text-decoration-none"  to="/admin/logout">Logout</Link>
                 </li>
               </ul>
             </div>

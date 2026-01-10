@@ -12,11 +12,9 @@ export const AdminProfile = () => {
 
   const fileInputRef = useRef(null);
 
-  const userId = "65a4c3d2e1f0a9b8c7d6e5f4"; // temporary
+  const userId = "65a4c3d2e1f0a9b8c7d6e5f4";
 
-  // -------------------------------
-  // 1️⃣ LOAD PROFILE
-  // -------------------------------
+
 const loadProfile = async () => {
   if (!userId) {
     console.warn("UserId missing — skipping profile load");
@@ -46,18 +44,14 @@ const loadProfile = async () => {
 
 useEffect(() => {
   loadProfile();
-}, [userId]); // 👈 runs ONLY when userId is ready
+}, [userId]); 
 
-  // -------------------------------
-  // 2️⃣ INPUT CHANGE
-  // -------------------------------
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // -------------------------------
-  // 3️⃣ IMAGE CHANGE + PREVIEW
-  // -------------------------------
+  
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setSelectedFile(file);
@@ -71,9 +65,8 @@ useEffect(() => {
     fileInputRef.current.click();
   };
 
-  // -------------------------------
-  // 4️⃣ SUBMIT UPDATE
-  // -------------------------------
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -84,7 +77,7 @@ useEffect(() => {
       fd.append("mobile", form.mobile);
 
       if (selectedFile) {
-        fd.append("profilePic", selectedFile); // MUST MATCH backend
+        fd.append("profilePic", selectedFile); 
       }
 
       const res = await axios.put(`/api/admin/${userId}`, fd);

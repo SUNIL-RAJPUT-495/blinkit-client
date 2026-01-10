@@ -7,6 +7,15 @@ const SummaryApi = {
     method: "post",
   },
 
+  AdminLogin : {
+    url : baseURL + "/api/user/login",
+    method: "post"
+  },
+  emailVerification :{
+    url : baseURL + "/api/user/verify-email",
+    method:"post"
+  },
+
   // image upload
 
 

@@ -14,6 +14,8 @@ import { OtpInput } from "../pages/customer/OtpInput.jsx"
 import { Cart } from "../pages/customer/Cart.jsx";
 import { AdminLogin } from "../pages/admin/Auth/AdminLogin.jsx";
 import {PrivateRoute} from "../Component/admin/PrivateAdinRoute.jsx"
+import { Logout } from "../pages/admin/Profile/LogOut.jsx";
+import { AdminEmailVerification } from "../pages/admin/Auth/AdminEmailVerification.jsx";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +37,8 @@ const router = createBrowserRouter([
     children: [
       { path: "login", element: <AdminLogin /> },
       { path: "register", element: <AdminRegister /> },
+      {path:"logout",element:<Logout/>},
+      {path:"emailVerification",element:<AdminEmailVerification/>},
 
     
       {
