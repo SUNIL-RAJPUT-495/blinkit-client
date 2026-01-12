@@ -37,7 +37,7 @@ export const Header = () => {
           </div>
 
           <button
-            onClick={() => alert("Login flow")}
+            onClick={() => navigate("login")}
             className="border-0 bg-white d-none d-md-block"
           >
             Login

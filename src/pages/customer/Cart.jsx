@@ -111,7 +111,9 @@ export const Cart = () => {
                 </Modal.Header>
 
                 <Modal.Body className="modal-body-scrollable px-3 bg-light">
+
                     {/* Delivery Info and Items combined in one card */}
+                    
                     <div className="bg-white rounded border shadow-sm mb-3 overflow-hidden">
                         
                         <div className="d-flex align-items-center p-3">

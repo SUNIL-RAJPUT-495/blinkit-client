@@ -24,14 +24,13 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "search", element: <Searchpage /> },
-      { path: "login", element: <LoginPage /> },
-      { path: "login/OtpInput", element: <OtpInput /> },
-      { path: "AdminLayout", element: <AdminLayout /> },
-
       { path: "cart", element: <Cart /> }
     ],
 
   },
+  { path: "login", element: <LoginPage /> },
+      { path: "login/OtpInput", element: <OtpInput /> },
+      { path: "AdminLayout", element: <AdminLayout /> },
    {
     path: "/admin",
     children: [
