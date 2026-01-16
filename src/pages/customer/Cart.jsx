@@ -42,19 +42,46 @@ export const Cart = () => {
         navigate("/login");
     };
 
-    const handleClick = async ()=>{
-        try{
+    const handleClick = async () => {
+        try {
+             const options = {
+                key: "YOUR_RAZORPAY_KEY_ID", // replace with your key
+                amount: data.amount,
+                currency: "INR",
+                name: "Blinkit Clone",
+                description: "Test Payment",
+                order_id: data.id, // from backend
+                handler: async function (response) {
+                    // Verify payment at backend
+                    const verifyRes = await Axios.post("/api/payment/verify", response);
+                    if (verifyRes.data.success) {
+                        alert("Payment successful!");
+                    }
+                },
+                prefill: {
+                    name: "John Doe",
+                    email: "john@example.com",
+                    contact: "9999999999"
+                },
+                theme: { color: "#27943f" },
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+
+
+
             const res = await Axios({
-                url:SummaryApi.addcart.url,
-                method:SummaryApi.addcart.method,
-                data:{totalItems,totalPrice,items:cartItems}
+                url: SummaryApi.addcart.url,
+                method: SummaryApi.addcart.method,
+                data: { totalItems, totalPrice, items: cartItems }
             })
-            if(res.data.success){
+            if (res.data.success) {
                 console.log("order placed succesfully")
             }
-            
+
         }
-        catch(err){
+        catch (err) {
             console.log(err)
         }
     }
@@ -132,9 +159,9 @@ export const Cart = () => {
                 <Modal.Body className="modal-body-scrollable px-3 bg-light">
 
                     {/* Delivery Info and Items combined in one card */}
-                    
+
                     <div className="bg-white rounded border shadow-sm mb-3 overflow-hidden">
-                        
+
                         <div className="d-flex align-items-center p-3">
                             <div style={{ width: "50px" }}>
                                 <img src={dileverytime} alt="delivery" className="w-100" />
