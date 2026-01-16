@@ -1,4 +1,4 @@
-export const baseURL = "https://blinkit-server-sigma.vercel.app";
+export const baseURL = "http://localhost:8080";
 
 const SummaryApi = {
   /* ================= USER ================= */
@@ -93,7 +93,16 @@ const SummaryApi = {
   editProduct:{
     url:baseURL + "/api/product/edit-Product",
     method:"put"
-  }
+  },
+
+
+
+  // cart
+
+  addcart:{
+    url:baseURL + "/api/cart/add-cart",
+    method:"post"
+  },
 };
 
 export default SummaryApi;

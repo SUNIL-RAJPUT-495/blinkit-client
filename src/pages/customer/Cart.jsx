@@ -7,6 +7,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { addItem, removeItem } from "../../Redux/Slice";
 import { GrNext } from "react-icons/gr";
 import { useState, useEffect } from "react";
+import Axios from "../../utils/Axios";
+import SummaryApi from "../../common/SummaryApi";
 
 export const Cart = () => {
     const dispatch = useDispatch();
@@ -39,6 +41,23 @@ export const Cart = () => {
     const handelLogin = () => {
         navigate("/login");
     };
+
+    const handleClick = async ()=>{
+        try{
+            const res = await Axios({
+                url:SummaryApi.addcart.url,
+                method:SummaryApi.addcart.method,
+                data:{totalItems,totalPrice,items:cartItems}
+            })
+            if(res.data.success){
+                console.log("order placed succesfully")
+            }
+            
+        }
+        catch(err){
+            console.log(err)
+        }
+    }
 
     return (
         <>
@@ -192,7 +211,7 @@ export const Cart = () => {
                     <Button
                         className="w-100 py-3 border-0 d-flex justify-content-between align-items-center"
                         style={{ backgroundColor: "#27943f", borderRadius: "12px" }}
-                        onClick={handelLogin}
+                        onClick={handleClick}
                     >
                         <div className="text-start text-white">
                             <h5 className="m-0 fw-bold">₹{totalPrice + 2}</h5>
