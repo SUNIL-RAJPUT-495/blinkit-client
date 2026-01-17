@@ -43,48 +43,45 @@ export const Cart = () => {
     };
 
     const handleClick = async () => {
-        try {
-             const options = {
-                key: "YOUR_RAZORPAY_KEY_ID", // replace with your key
-                amount: data.amount,
-                currency: "INR",
-                name: "Blinkit Clone",
-                description: "Test Payment",
-                order_id: data.id, // from backend
-                handler: async function (response) {
-                    // Verify payment at backend
-                    const verifyRes = await Axios.post("/api/payment/verify", response);
-                    if (verifyRes.data.success) {
-                        alert("Payment successful!");
-                    }
-                },
-                prefill: {
-                    name: "John Doe",
-                    email: "john@example.com",
-                    contact: "9999999999"
-                },
-                theme: { color: "#27943f" },
-            };
+  try {
+    // 1️⃣ Create order on backend
+    const orderRes = await Axios.post("/api/payment/create-order", {
+      amount: totalPrice + 2,
+    });
+    const order = orderRes.data.order;
 
-            const rzp = new window.Razorpay(options);
-            rzp.open();
+    const options = {
+      key: "YOUR_RAZORPAY_KEY_ID", // test key
+      amount: order.amount,
+      currency: order.currency,
+      name: "Blinkit Clone",
+      description: "Total Payment",
+      order_id: order.id, // important!
+      handler: async function (response) {
+        // 3️⃣ After payment, send response back to server
+        const verifyRes = await Axios.post("/api/payment/verify-payment", response);
 
-
-
-            const res = await Axios({
-                url: SummaryApi.addcart.url,
-                method: SummaryApi.addcart.method,
-                data: { totalItems, totalPrice, items: cartItems }
-            })
-            if (res.data.success) {
-                console.log("order placed succesfully")
-            }
-
+        if (verifyRes.data.success) {
+          alert("Payment successful! 🎉");
+        } else {
+          alert("Payment verification failed");
         }
-        catch (err) {
-            console.log(err)
-        }
-    }
+      },
+      prefill: {
+        name: "Anonymous",
+        email: "example@mail.com",
+      },
+      theme: { color: "#27943f" },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 
     return (
         <>

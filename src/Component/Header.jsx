@@ -14,6 +14,9 @@ export const Header = () => {
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const openCart = () => {
+    if(totalItems==0){
+      return
+    }
     navigate("/cart", { state: { from: location.pathname } });
   };
   const totalPrice = cartItems.reduce(
