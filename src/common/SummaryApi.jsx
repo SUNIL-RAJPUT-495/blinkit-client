@@ -1,7 +1,7 @@
 export const baseURL = "https://blinkit-server-sigma.vercel.app";
 
 const SummaryApi = {
-  /* ================= USER ================= */
+  //user
   Register: {
     url: baseURL + "/api/user/register",
     method: "post",
@@ -99,10 +99,14 @@ const SummaryApi = {
 
   // cart
 
-  addcart:{
-    url:baseURL + "/api/cart/add-cart",
+  creatOrder:{
+    url:baseURL + "/api/order/orderCreat",
     method:"post"
   },
+  verifypayment:{
+    url:baseURL+"/api/payment/verifyPayment",
+    method:"post"
+  }
 };
 
 export default SummaryApi;
