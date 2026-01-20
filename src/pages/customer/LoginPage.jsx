@@ -3,11 +3,12 @@ import { MdKeyboardBackspace } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
-import loginLogo from "../../assets/app_logo.svg"
-import loginimage from "../../assets/loginpage.jpg"
+import loginLogo from "../../assets/app_logo.svg";
+import loginimage from "../../assets/loginpage.jpg";
+import Axios from "../../utils/Axios";
+import SummaryApi from "../../common/SummaryApi";
 
 export const LoginPage = () => {
-
   const navigate = useNavigate();
   const handleClose = () => {
     navigate("/");
@@ -18,24 +19,22 @@ export const LoginPage = () => {
 
   const handleClick = async (e) => {
     e.preventDefault();
-    const res = await fetch("http://localhost:8080/api/user/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ Number })
 
-    })
     if (Number.length !== 10) {
-      console.log("enter correct numberr")
+      console.log("enter correct numberr");
     }
-    else { navigate("/login/OtpInput", { state: { Number } }); }
-    const data = await res.json();
-    SetUser(data)
-
-    console.log(data);
-
-  }
+    try {
+      const res = await Axios({
+        url: SummaryApi.customerUser.url,
+        method: SummaryApi.customerUser.method,
+        data: { Number },
+      });
+      navigate("/login/OtpInput", { state: { Number } });
+      console.log(res);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <Modal
@@ -50,11 +49,11 @@ export const LoginPage = () => {
           <MdKeyboardBackspace />
         </Link>
       </div>
-      <div style={{ height: "270px" }}><img src={loginimage} className="h-100 w-100" alt="loginimage" /></div>
+      <div style={{ height: "270px" }}>
+        <img src={loginimage} className="h-100 w-100" alt="loginimage" />
+      </div>
       <Modal.Header className="border-0 justify-content-center mb-0 ">
-
         <Modal.Title>
-
           <img src={loginLogo} alt="app logo" height="60" />
         </Modal.Title>
       </Modal.Header>

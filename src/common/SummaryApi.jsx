@@ -1,7 +1,7 @@
-export const baseURL = "https://blinkit-server-sigma.vercel.app";
+export const baseURL = "http://localhost:8080";
 
 const SummaryApi = {
-  /* ================= USER ================= */
+  //user
   Register: {
     url: baseURL + "/api/user/register",
     method: "post",
@@ -16,9 +16,16 @@ const SummaryApi = {
     method:"post"
   },
 
+
+  // customer 
+
+  customerUser:{
+    url:baseURL+"/api/user/customerUser",
+    method:"post"
+  }
   // image upload
 
-
+,
   uploadImage: {
     url: baseURL + "/api/file/upload",
     method: "post",
@@ -30,7 +37,7 @@ const SummaryApi = {
     method: "post",
   },
 
-  /* ================= CATEGORY ================= */
+  /*  CATEGORY  */
 
   addCategory: {
     url: baseURL + "/api/category/add-category",
@@ -52,7 +59,7 @@ const SummaryApi = {
     method: "delete",
   },
 
-  /* ================= SUB CATEGORY ================= */
+  /* SUB CATEGORY */
 
   addSubCategory: {
     url: baseURL + "/api/subcategory/add-subcategory",
@@ -99,10 +106,22 @@ const SummaryApi = {
 
   // cart
 
-  addcart:{
-    url:baseURL + "/api/cart/add-cart",
+  creatOrder:{
+    url:baseURL + "/api/order/orderCreat",
     method:"post"
   },
+  verifypayment:{
+    url:baseURL+"/api/payment/verifyPayment",
+    method:"post"
+  },
+
+
+  //address
+
+  saveAdress:{
+    url:baseURL +"/api/address/save-address",
+    method:"post"
+  }
 };
 
 export default SummaryApi;
