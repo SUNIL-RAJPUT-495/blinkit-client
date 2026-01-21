@@ -1,4 +1,4 @@
-export const baseURL = "https://blinkit-server-sigma.vercel.app";
+export const baseURL = "http://localhost:8080";
 
 const SummaryApi = {
   //user
@@ -21,6 +21,11 @@ const SummaryApi = {
 
   customerUser:{
     url:baseURL+"/api/user/customerUser",
+    method:"post"
+  }
+,
+  verifyCustomerOtp:{
+    url:baseURL+"/api/user/verify-customer-otp",
     method:"post"
   }
   // image upload
@@ -121,6 +126,10 @@ const SummaryApi = {
   saveAdress:{
     url:baseURL +"/api/address/save-address",
     method:"post"
+  },
+  showAddress:{
+    url:baseURL +"/api/address/show-address",
+    method:"get"
   }
 };
 

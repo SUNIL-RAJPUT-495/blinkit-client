@@ -32,11 +32,16 @@ export const Cart = () => {
   const location = useLocation();
   const cartItems = useSelector((state) => state.cart.items || []);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 767);
+  const { isLoaded } = useJsApiLoader({
+    
+    googleMapsApiKey: "",
+    libraries: ["places"],
+  });
 
   const [form, setForm] = useState({
     houseNo: "",
     floor: "",
-    pinCode:"",
+    pinCode: "",
     area: "",
     landmark: "",
     receiverName: "",
@@ -47,7 +52,7 @@ export const Cart = () => {
     { label: "Floor (optional)", name: "floor" },
     { label: "Area / Sector*", name: "area" },
     { label: "Landmark", name: "landmark" },
-    {label:"pincode", name:"pincode"}
+    { label: "pincode", name: "pincode" }
   ];
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,32 +62,55 @@ export const Cart = () => {
     }));
   };
 
-  const saveAddresh =async () => {
-    try {
-      const { houseNo, landmark, receiverName, receiverNumber,pincode } = form;
-      if (!houseNo || !landmark || !receiverName || !receiverNumber||!pincode) {
-        alert("enter correct addrtewsh");
-      }
-      if (receiverNumber.length !== 10) {
-        alert("Enter correct mobile number");
-      }
+  const saveAddresh = async () => {
+    const { houseNo, landmark, receiverName, receiverNumber, pincode, area } = form;
+    
+    if (!houseNo || !landmark || !receiverName || !receiverNumber || !pincode || !area) {
+      alert("Please fill all required fields");
+      return;
+    }
 
-      const res =await Axios({
-        url:SummaryApi.saveAdress.url,
-        method:SummaryApi.saveAdress.method,
-        data:{form}
-      })
-      alert(res.data.message)
+    if (receiverNumber.length !== 10) {
+      alert("Enter a valid 10-digit mobile number");
+      return;
+    }
+
+    try {
+      const res = await Axios({
+        url: SummaryApi.saveAdress.url,
+        method: SummaryApi.saveAdress.method,
+        data: { form }
+      });
+
+      if (res.data.success) {
+        alert("Address saved!");
+        setAddnewAddress(false);
+        fetchSavedAddresses(); 
+      }
     } catch (err) {
-      console.log(err);
+      console.log("Error saving address:", err);
     }
   };
 
-  // Google Maps Loader
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: "YOUR_GOOGLE_MAPS_API_KEY",
-  });
+  const [savedAddresses, setSavedAddresses] = useState([]);
+
+  const fetchSavedAddresses = async () => {
+    try {
+      const res = await Axios({
+        url: SummaryApi.showAddress.url,
+        method: SummaryApi.showAddress.method,
+      });
+      if (res.data.success) {
+        setSavedAddresses(res.data.data); 
+      }
+    } catch (err) {
+      console.log("Error fetching addresses", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchSavedAddresses();
+  }, []);
 
   const onMapLoad = useCallback((mapInstance) => {
     setMap(mapInstance);
@@ -354,15 +382,28 @@ export const Cart = () => {
           </div>
           <p className="text-muted small fw-bold mb-3">Your saved address</p>
           <div style={{ maxHeight: "300px", overflowY: "auto" }}>
-            <div className="d-flex align-items-start p-3 mb-3 rounded border shadow-sm bg-white">
-              <IoLocationOutline className="text-warning me-3" size={24} />
-              <div>
-                <div className="fw-bold small">Home</div>
-                <div className="text-muted small mt-1">
-                  F-2 Balaji Apartment, Jaipur
+            {/* SAVED ADDRESSES MODAL ke andar map function update karein */}
+            {savedAddresses.map((addr, index) => (
+              <div
+                key={index}
+                className={`d-flex align-items-start p-3 mb-3 rounded border shadow-sm bg-white ${selectedAddress?._id === addr._id ? "border-success bg-light" : ""
+                  }`}
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  setSelectedAddress(addr); // State update
+                  setShowAddressModal(false); // Modal close
+                }}
+              >
+                <IoLocationOutline className="text-warning me-3" size={24} />
+                <div>
+                  <div className="fw-bold small">{addr.receiverName}</div>
+                  <div className="text-muted small mt-1">
+                    {addr.houseNo}, {addr.area}, {addr.landmark} - {addr.pincode}
+                  </div>
+                  <div className="text-muted small">{addr.receiverNumber}</div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </Modal.Body>
       </Modal>

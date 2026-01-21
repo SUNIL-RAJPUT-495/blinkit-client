@@ -1,10 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import Axios from '../../utils/Axios';
+import SummaryApi from '../../common/SummaryApi';
+import { useNavigate } from 'react-router-dom';
 
-export const OtpInput = ({ length = 6, onOtpSubmit = () => {} }) => {
+export const OtpInput = ({ length = 6, onOtpSubmit = () => { } }) => {
     const location = useLocation();
     const Number = location.state?.Number;
-    
+    const navigate = useNavigate();
+
     const [otp, setOtp] = useState(new Array(length).fill(""));
     const inputRefs = useRef([]);
 
@@ -36,15 +40,45 @@ export const OtpInput = ({ length = 6, onOtpSubmit = () => {} }) => {
         }
     };
 
+    const onClick = async () => {
+
+      const combinedOtp = otp.join(""); // Array ko string mein badla
+
+        if (combinedOtp.length < length) {
+            alert("Please enter full OTP");
+            return;
+        }
+
+        try {
+            const res = await Axios({
+                url: SummaryApi.verifyCustomerOtp.url,
+                method: SummaryApi.verifyCustomerOtp.method,
+                data: {Number: Number, 
+                    otp: combinedOtp }
+            })
+            if (res.data.success) {
+                console.log("OTP verified successfully");
+                navigate("/");
+            } else {
+                alert(res.data.message || "Invalid OTP");
+            }
+        }
+
+        catch (err) {
+            console.log("otp error", err)
+        }
+
+    }
+
     return (
-        /* VH-100 screen ko full height dega aur d-flex center karega */
+
         <div className="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
             <div className="card p-4 shadow-lg border-0" style={{ maxWidth: '450px', width: '100%' }}>
-                
+
                 <div className="mb-4">
                     <h2 className='fw-bold text-center mb-2'>OTP Verification</h2>
                     <p className='text-center text-muted'>
-                        We have sent a verification code to <br/>
+                        We have sent a verification code to <br />
                         <span className="fw-bold text-dark">+91 {Number}</span>
                     </p>
                 </div>
@@ -60,24 +94,24 @@ export const OtpInput = ({ length = 6, onOtpSubmit = () => {} }) => {
                             onChange={(e) => handleChange(index, e)}
                             onKeyDown={(e) => handleKeyDown(index, e)}
                             className='form-control text-center mx-1 fw-bold shadow-sm'
-                            style={{ 
-                                height: "55px", 
-                                width: "48px", 
+                            style={{
+                                height: "55px",
+                                width: "48px",
                                 fontSize: "22px",
                                 border: "2px solid #ddd"
                             }}
                         />
                     ))}
                 </div>
-                
+
                 <div className='text-center'>
-                    <button 
-                        className='btn btn-success w-100 py-2 fs-5 shadow-sm' 
-                        onClick={() => onOtpSubmit(otp.join(""))}>
+                    <button
+                        className='btn btn-success w-100 py-2 fs-5 shadow-sm'
+                        onClick={onClick}>
                         Verify OTP
                     </button>
                     <p className="mt-3 text-muted small">
-                        Didn't receive code? <span className="text-success fw-bold cursor-pointer" style={{cursor:'pointer'}}>Resend</span>
+                        Didn't receive code? <span className="text-success fw-bold cursor-pointer" style={{ cursor: 'pointer' }}>Resend</span>
                     </p>
                 </div>
 
