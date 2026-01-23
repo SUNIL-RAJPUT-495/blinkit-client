@@ -6,4 +6,4 @@ const Axios = axios.create({
     withCredentials :true
 })
 
-export default Axios
+export default Axios; 
