@@ -16,6 +16,13 @@ import { AdminLogin } from "../pages/admin/Auth/AdminLogin.jsx";
 import {PrivateRoute} from "../Component/admin/PrivateAdinRoute.jsx"
 import { Logout } from "../pages/admin/Profile/LogOut.jsx";
 import { AdminEmailVerification } from "../pages/admin/Auth/AdminEmailVerification.jsx";
+import Orders from "../pages/admin/Orders.jsx";
+import Address from "../pages/admin/Address.jsx";
+import { CustomerAccountLayout } from "../layout/CustomerAccountLayout.jsx";
+import CustomerProfile from "../pages/customer/Account/CustomerProfile.jsx";
+import CustomerOrders from "../pages/customer/Account/CustomerOrders.jsx";
+import CustomerAddress from "../pages/customer/Account/CustomerAddress.jsx";
+import Success from "../pages/customer/Success.jsx";
 
 const router = createBrowserRouter([
   {
@@ -24,9 +31,20 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Home /> },
       { path: "search", element: <Searchpage /> },
-      { path: "cart", element: <Cart /> }
+      { path: "cart", element: <Cart /> },
+      { path: "success", element: <Success /> }
     ],
 
+  },
+  {
+    path: "/account",
+    element: <CustomerAccountLayout />,
+    children: [
+      { index: true, element: <CustomerProfile /> },
+      { path: "profile", element: <CustomerProfile /> },
+      { path: "orders", element: <CustomerOrders /> },
+      { path: "address", element: <CustomerAddress /> },
+    ]
   },
   { path: "login", element: <LoginPage /> },
       { path: "login/OtpInput", element: <OtpInput /> },
@@ -54,6 +72,8 @@ const router = createBrowserRouter([
           { path: "subcategory", element: <SubCategory /> },
           { path: "upload-product", element: <UploadProductPage /> },
           { path: "products", element: <Products /> },
+          { path: "orders", element: <Orders /> },
+          { path: "address", element: <Address /> },
         ],
       },
     ],

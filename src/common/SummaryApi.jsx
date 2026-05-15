@@ -1,18 +1,18 @@
-export const baseURL = "https://blinkit-server-sigma.vercel.app";
+export const baseURL = "http://localhost:8080";
 
 const SummaryApi = {
   //user
   Register: {
-    url: baseURL + "/api/user/register",
+    url: "/api/user/register",
     method: "post",
   },
 
   AdminLogin : {
-    url : baseURL + "/api/user/login",
+    url : "/api/user/login",
     method: "post"
   },
   emailVerification :{
-    url : baseURL + "/api/user/verify-email",
+    url : "/api/user/verify-email",
     method:"post"
   },
 
@@ -20,90 +20,99 @@ const SummaryApi = {
   // customer 
 
   customerUser:{
-    url:baseURL+"/api/user/customerUser",
+    url:"/api/user/customerUser",
     method:"post"
+  },
+  userDetails: {
+    url: "/api/user/user-details",
+    method: "get"
+  },
+  updateUserDetails: {
+    url: "/api/user/update-user",
+    method: "put"
   }
+  
 ,
   verifyCustomerOtp:{
-    url:baseURL+"/api/user/verify-customer-otp",
+    url:"/api/user/verify-customer-otp",
     method:"post"
   }
   // image upload
 
 ,
   uploadImage: {
-    url: baseURL + "/api/file/upload",
+    url: "/api/file/upload",
     method: "post",
   },
 
 
    productImage: {
-    url: baseURL + "/api/file/upload-product",
+    url: "/api/file/upload-product",
     method: "post",
   },
 
   /*  CATEGORY  */
 
   addCategory: {
-    url: baseURL + "/api/category/add-category",
+    url: "/api/category/add-category",
     method: "post",
   },
 
   getCategory: {
-    url: baseURL + "/api/category/get-category",
+    url: "/api/category/get-category",
     method: "get",
   },
 
   updateCategory: {
-    url: baseURL + "/api/category/update-category",
+    url: "/api/category/update-category",
     method: "put",
   },
 
   deleteCategory: {
-    url: baseURL + "/api/category/delete-category",
+    url: "/api/category/delete-category",
     method: "delete",
   },
 
   /* SUB CATEGORY */
 
   addSubCategory: {
-    url: baseURL + "/api/subcategory/add-subcategory",
+    url: "/api/subcategory/add-subcategory",
     method: "post",
   },
 
   getSubCategory: {
-    url: baseURL + "/api/subcategory/get-subcategory",
+    url: "/api/subcategory/get-subcategory",
     method: "get",
   },
 
   updateSubCategory: {
-    url: baseURL + "/api/subcategory/update-subcategory",
+    url: "/api/subcategory/update-subcategory",
     method: "put",
   },
 
   deleteSubCategory: {
-    url: baseURL + "/api/subcategory/delete-subcategory", 
+    url: "/api/subcategory/delete-subcategory", 
     method: "delete",
   },
 
   // product 
 
   addProduct:{
-    url:baseURL + "/api/product/add-product",
+    url: "/api/product/add-product",
     method:"post"
   },
 
   getProduct:{
-    url:baseURL+"/api/product/getAllProducts",
+    url:"/api/product/getAllProducts",
     method:"get"
   }
   ,
   deleteProduct:{
-    url:baseURL+ "/api/product/delet-product",
+    url: "/api/product/delet-product",
     method:'delete'
   },
   editProduct:{
-    url:baseURL + "/api/product/edit-Product",
+    url: "/api/product/edit-Product",
     method:"put"
   },
 
@@ -112,11 +121,11 @@ const SummaryApi = {
   // cart
 
   creatOrder:{
-    url:baseURL + "/api/order/orderCreat",
+    url: "/api/order/orderCreat",
     method:"post"
   },
   verifypayment:{
-    url:baseURL+"/api/payment/verifyPayment",
+    url:"/api/order/verifyPayment",
     method:"post"
   },
 
@@ -124,12 +133,24 @@ const SummaryApi = {
   //address
 
   saveAdress:{
-    url:baseURL +"/api/address/save-address",
+    url :"/api/address/save-address",
     method:"post"
   },
   showAddress:{
-    url:baseURL +"/api/address/show-address",
+    url :"/api/address/show-address",
     method:"get"
+  },
+  getAllOrders: {
+    url: "/api/order/getAllOrders",
+    method: "get"
+  },
+  getAllAddresses: {
+    url: "/api/address/getAllAddresses",
+    method: "get"
+  },
+  getMyOrders: {
+    url: "/api/order/getMyOrders",
+    method: "get"
   }
 };
 

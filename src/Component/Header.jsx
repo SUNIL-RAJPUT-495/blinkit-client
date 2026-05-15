@@ -39,12 +39,36 @@ export const Header = () => {
             <Search />
           </div>
 
-          <button
-            onClick={() => navigate("login")}
-            className="border-0 bg-white d-none d-md-block"
-          >
-            Login
-          </button>
+          {localStorage.getItem("accessToken") ? (
+            <div 
+              className="d-flex align-items-center gap-2 cursor-pointer" 
+              onClick={() => {
+                try {
+                  const userStr = localStorage.getItem("user");
+                  const user = userStr ? JSON.parse(userStr) : {};
+                  if (user.role === "ADMIN") {
+                    navigate("/admin/profile");
+                  } else {
+                    navigate("/account/profile");
+                  }
+                } catch (e) {
+                  console.error("Error parsing user data:", e);
+                  navigate("/account/profile");
+                }
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              <CgProfile size={28} className="text-success" />
+              <span className="fw-bold d-none d-lg-inline">Account</span>
+            </div>
+          ) : (
+            <button
+              onClick={() => navigate("/login")}
+              className="border-0 bg-white d-none d-md-block fw-bold"
+            >
+              Login
+            </button>
+          )}
 
           <span
             onClick={openCart}

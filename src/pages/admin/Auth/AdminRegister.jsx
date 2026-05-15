@@ -49,7 +49,7 @@ export const AdminRegister = () => {
 
       setData({ name: "", email: "", password: "", confirmPassword: "" });
       setError("");
-      navigate("/admin/emailVerification",{state: { email: data.email }} );
+      navigate("/admin/login");
 
     } catch (err) {
       console.error(err);

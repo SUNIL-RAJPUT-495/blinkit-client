@@ -41,7 +41,7 @@ export const Cart = () => {
   const [form, setForm] = useState({
     houseNo: "",
     floor: "",
-    pinCode: "",
+    pincode: "",
     area: "",
     landmark: "",
     receiverName: "",
@@ -51,8 +51,8 @@ export const Cart = () => {
     { label: "Flat / House no*", name: "houseNo" },
     { label: "Floor (optional)", name: "floor" },
     { label: "Area / Sector*", name: "area" },
-    { label: "Landmark", name: "landmark" },
-    { label: "pincode", name: "pincode" }
+    { label: "Landmark*", name: "landmark" },
+    { label: "Pincode*", name: "pincode" }
   ];
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -85,6 +85,16 @@ export const Cart = () => {
       if (res.data.success) {
         alert("Address saved!");
         setAddnewAddress(false);
+        setSelectedAddress(res.data.data); // Set the newly saved address as selected
+        setForm({
+          houseNo: "",
+          floor: "",
+          pincode: "",
+          area: "",
+          landmark: "",
+          receiverName: "",
+          receiverNumber: "",
+        });
         fetchSavedAddresses(); 
       }
     } catch (err) {
@@ -93,6 +103,7 @@ export const Cart = () => {
   };
 
   const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
 
   const fetchSavedAddresses = async () => {
     try {
@@ -101,7 +112,10 @@ export const Cart = () => {
         method: SummaryApi.showAddress.method,
       });
       if (res.data.success) {
-        setSavedAddresses(res.data.data); 
+        setSavedAddresses(res.data.data);
+        if (res.data.data.length > 0 && !selectedAddress) {
+          setSelectedAddress(res.data.data[0]);
+        }
       }
     } catch (err) {
       console.log("Error fetching addresses", err);
@@ -109,8 +123,10 @@ export const Cart = () => {
   };
 
   useEffect(() => {
-    fetchSavedAddresses();
-  }, []);
+    if (localStorage.getItem("accessToken")) {
+      fetchSavedAddresses();
+    }
+  }, [localStorage.getItem("accessToken")]);
 
   const onMapLoad = useCallback((mapInstance) => {
     setMap(mapInstance);
@@ -160,38 +176,82 @@ export const Cart = () => {
   };
 
   const handleClick = async () => {
-    try {
-      await Axios({
-        url: SummaryApi.creatOrder.url,
-        method: SummaryApi.creatOrder.method,
-        data: { totalPrice, totalItems, cartItems },
-      });
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
 
+    if (!selectedAddress) {
+      setShowAddressModal(true);
+      return;
+    }
+
+    try {
       const isRzpLoaded = await loadRazorpay();
       if (!isRzpLoaded) return alert("Razorpay SDK load nahi hua");
 
+      // 1. Create Order and get Razorpay Order ID
       const orderRes = await Axios({
-        url: SummaryApi.creatPayment.url,
-        method: SummaryApi.creatPayment.method,
-        data: { amount: (totalPrice + 2) * 100 },
+        url: SummaryApi.creatOrder.url,
+        method: SummaryApi.creatOrder.method,
+        data: { 
+          totalPrice, 
+          totalItems, 
+          cartItems, 
+          deliveryAddress: selectedAddress.address_line 
+        },
       });
 
-      const data = orderRes.data.order;
+      if (!orderRes.data.success) {
+        alert("Failed to create order");
+        return;
+      }
+
+      const orderData = orderRes.data.order;
+      
+      // 2. Open Razorpay
       const options = {
         key: "rzp_test_S4vmJmWwwGuh3s",
-        amount: data.amount,
+        amount: orderData.totalAmount * 100,
         currency: "INR",
         name: "Blinkit Clone",
-        order_id: data.id,
+        description: "Payment for your order",
+        order_id: orderData.payment.razorpayOrderId,
         handler: async (res) => {
-          const verifyRes = await Axios.post("/api/payment/verify", res);
-          if (verifyRes.data.success) alert("Payment successful!");
+          try {
+            const verifyRes = await Axios({
+              ...SummaryApi.verifypayment,
+              data: {
+                razorpay_order_id: res.razorpay_order_id,
+                razorpay_payment_id: res.razorpay_payment_id,
+                razorpay_signature: res.razorpay_signature
+              }
+            });
+            
+            if (verifyRes.data.success) {
+              navigate("/success");
+              // Clear cart? Maybe dispatch clearCart action
+            } else {
+              alert("Payment verification failed");
+            }
+          } catch (error) {
+            console.error("Verification error:", error);
+            alert("Payment verification error");
+          }
+        },
+        prefill: {
+          name: selectedAddress.name,
+          contact: selectedAddress.mobile
         },
         theme: { color: "#27943f" },
       };
-      new window.Razorpay(options).open();
+      
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (err) {
-      console.log(err);
+      console.log("Checkout error:", err);
+      alert(err.response?.data?.message || "Checkout failed");
     }
   };
 
@@ -324,12 +384,14 @@ export const Cart = () => {
             <div className="d-flex align-items-center">
               <IoLocationOutline className="text-primary me-2" size={22} />
               <div>
-                <div className="fw-bold small">Delivering to Home</div>
+                <div className="fw-bold small">
+                  {selectedAddress ? `Delivering to ${selectedAddress.name}` : "Select Address"}
+                </div>
                 <div
                   className="text-muted text-truncate small"
                   style={{ maxWidth: "180px" }}
                 >
-                  F-2 balaji apartments jaipur
+                  {selectedAddress ? selectedAddress.address_line : "No address selected"}
                 </div>
               </div>
             </div>
@@ -337,7 +399,7 @@ export const Cart = () => {
               className="btn btn-sm btn-link text-success fw-bold text-decoration-none"
               onClick={() => setShowAddressModal(true)}
             >
-              Change
+              {selectedAddress ? "Change" : "Add"}
             </button>
           </div>
 
@@ -350,7 +412,19 @@ export const Cart = () => {
               <div style={{ fontSize: "10px" }}>TOTAL</div>
             </div>
             <div className="text-white fw-bold">
-              Login to Proceed <GrNext className="ms-2" size={12} />
+              {!localStorage.getItem("accessToken") ? (
+                <>
+                  Login to Proceed <GrNext className="ms-2" size={12} />
+                </>
+              ) : !selectedAddress ? (
+                <>
+                  Select Address <GrNext className="ms-2" size={12} />
+                </>
+              ) : (
+                <>
+                  Proceed to Pay <GrNext className="ms-2" size={12} />
+                </>
+              )}
             </div>
           </Button>
         </Modal.Footer>
@@ -527,6 +601,7 @@ export const Cart = () => {
                       className="form-control border-0 border-bottom bg-transparent mb-2 shadow-none small"
                       placeholder="Name *"
                       name="receiverName"
+                      value={form.receiverName}
                       onChange={handleChange}
                     />
                     <input
@@ -534,6 +609,7 @@ export const Cart = () => {
                       className="form-control border-0 border-bottom bg-transparent shadow-none small"
                       placeholder="Phone *"
                       name="receiverNumber"
+                      value={form.receiverNumber}
                       onKeyPress={(e) => {
                         if (!/[0-9]/.test(e.key)) e.preventDefault();
                       }}

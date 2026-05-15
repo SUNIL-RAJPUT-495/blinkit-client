@@ -58,6 +58,8 @@ export const OtpInput = ({ length = 6, onOtpSubmit = () => { } }) => {
             })
             if (res.data.success) {
                 console.log("OTP verified successfully");
+                localStorage.setItem("accessToken", res.data.data.accessToken);
+                localStorage.setItem("user", JSON.stringify(res.data.data));
                 navigate("/");
             } else {
                 alert(res.data.message || "Invalid OTP");

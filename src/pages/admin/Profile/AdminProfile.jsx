@@ -1,4 +1,6 @@
 import { useRef, useState, useEffect } from "react";
+import Axios from "../../../utils/Axios";
+import SummaryApi from "../../../common/SummaryApi";
 
 export const AdminProfile = () => {
   const [profileImage, setProfileImage] = useState(null);
@@ -12,81 +14,72 @@ export const AdminProfile = () => {
 
   const fileInputRef = useRef(null);
 
-  const userId = "65a4c3d2e1f0a9b8c7d6e5f4";
+  const loadProfile = async () => {
+    try {
+      const res = await Axios({
+        ...SummaryApi.userDetails
+      });
 
-
-const loadProfile = async () => {
-  if (!userId) {
-    console.warn("UserId missing — skipping profile load");
-    return;
-  }
-
-  try {
-    const res = await axios.get(`/api/admin/${userId}`);
-
-    if (!res.data.success) return;
-
-    const data = res.data.data;
-
-    setForm({
-      name: data?.name || "",
-      email: data?.email || "",
-      mobile: data?.mobile || "",
-    });
-
-    if (data?.profilePic) {
-      setProfileImage(`http://localhost:8080/uploads/${data.profilePic}`);
+      if (res.data.success) {
+        const data = res.data.data;
+        setForm({
+          name: data?.name || "",
+          email: data?.email || "",
+          mobile: data?.mobile || "",
+        });
+        if (data?.avatar) {
+          setProfileImage(data.avatar);
+        }
+      }
+    } catch (err) {
+      console.error("Load Profile Error:", err);
     }
-  } catch (err) {
-    console.error("Load Profile Error:", err);
-  }
-};
+  };
 
-useEffect(() => {
-  loadProfile();
-}, [userId]); 
-
+  useEffect(() => {
+    loadProfile();
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+
+    setProfileImage(URL.createObjectURL(file));
     setSelectedFile(file);
 
-    if (file) {
-      setProfileImage(URL.createObjectURL(file));
-    }
+    // Auto upload avatar if needed, or wait for submit
   };
 
   const handleEditClick = () => {
     fileInputRef.current.click();
   };
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const fd = new FormData();
-      fd.append("name", form.name);
-      fd.append("email", form.email);
-      fd.append("mobile", form.mobile);
+      // 1. Update user details
+      const res = await Axios({
+        ...SummaryApi.updateUserDetails,
+        data: form
+      });
 
+      // 2. Update avatar if selected
       if (selectedFile) {
-        fd.append("profilePic", selectedFile); 
+        const formData = new FormData();
+        formData.append("avatar", selectedFile);
+        await Axios.put("/api/user/upload-avatar", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
       }
-
-      const res = await axios.put(`/api/admin/${userId}`, fd);
 
       if (res.data.success) {
         alert("Profile Updated Successfully!");
         loadProfile();
-      } else {
-        alert(res.data.message || "Something went wrong");
       }
     } catch (err) {
       console.error("Update Error:", err);
@@ -95,34 +88,45 @@ useEffect(() => {
   };
 
   return (
-    <div className="mt-3">
-      <form onSubmit={handleSubmit}>
+    <div className="container-fluid px-0">
+      <div className="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom">
+        <h4 className="fw-bold mb-0">Admin Profile</h4>
+        <span className="badge bg-warning text-dark px-3 py-2 rounded-pill">Administrator</span>
+      </div>
 
-        {/* PROFILE IMAGE */}
-        <div className="mt-4 text-center">
-          <div
-            className="rounded-circle border mx-auto"
-            style={{ width: "90px", height: "90px", overflow: "hidden" }}
-          >
-            <img
-              src={
-                profileImage ||
-                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-              }
-              alt="profile"
-              className="w-100 h-100"
-              style={{ objectFit: "cover" }}
-            />
+      <form onSubmit={handleSubmit} className="row g-4">
+        {/* LEFT COLUMN: AVATAR */}
+        <div className="col-md-4 text-center border-md-end">
+          <div className="position-relative d-inline-block">
+            <div
+              className="rounded-circle border border-4 border-white shadow-sm mx-auto mb-3"
+              style={{ width: "150px", height: "150px", overflow: "hidden" }}
+            >
+              <img
+                src={
+                  profileImage ||
+                  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                }
+                alt="profile"
+                className="w-100 h-100"
+                style={{ objectFit: "cover" }}
+              />
+            </div>
+            
+            <button
+              type="button"
+              onClick={handleEditClick}
+              className="btn btn-dark btn-sm position-absolute bottom-0 start-50 translate-middle-x mb-2 shadow"
+              style={{ borderRadius: "20px", padding: "4px 15px" }}
+            >
+              Change Photo
+            </button>
           </div>
-
-          <button
-            type="button"
-            onClick={handleEditClick}
-            className="btn btn-warning btn-sm mt-2"
-            style={{ borderRadius: "15px", width: "85px" }}
-          >
-            Edit
-          </button>
+          
+          <div className="mt-3">
+            <h5 className="fw-bold mb-1">{form.name || "Admin User"}</h5>
+            <p className="text-muted small">{form.email}</p>
+          </div>
 
           <input
             type="file"
@@ -133,43 +137,62 @@ useEffect(() => {
           />
         </div>
 
-        <br />
+        {/* RIGHT COLUMN: FORM DETAILS */}
+        <div className="col-md-8">
+          <div className="bg-light p-4 rounded-3 border">
+            <h6 className="fw-bold mb-4">Personal Information</h6>
+            
+            <div className="row g-3">
+              <div className="col-12">
+                <label className="form-label small fw-bold text-muted text-uppercase">Full Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="Enter your full name"
+                  className="form-control form-control-lg border-0 shadow-sm"
+                  required
+                />
+              </div>
 
-        {/* FORM INPUTS */}
-        <label>Name</label>
-        <input
-          type="text"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          className="w-100 border-0 bg-body-secondary p-2 mb-2"
-        />
+              <div className="col-md-6">
+                <label className="form-label small fw-bold text-muted text-uppercase">Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="name@example.com"
+                  className="form-control form-control-lg border-0 shadow-sm"
+                  required
+                />
+              </div>
 
-        <label>Email</label>
-        <input
-          type="email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-          className="w-100 border-0 bg-body-secondary p-2 mb-2"
-        />
+              <div className="col-md-6">
+                <label className="form-label small fw-bold text-muted text-uppercase">Mobile Number</label>
+                <input
+                  type="text"
+                  name="mobile"
+                  value={form.mobile}
+                  onChange={handleChange}
+                  placeholder="+91 0000000000"
+                  className="form-control form-control-lg border-0 shadow-sm"
+                />
+              </div>
 
-        <label>Mobile</label>
-        <input
-          type="text"
-          name="mobile"
-          value={form.mobile}
-          onChange={handleChange}
-          className="w-100 border-0 bg-body-secondary p-2 mb-2"
-        />
-
-        <button
-          type="submit"
-          className="w-100 mt-3 fw-bold btn btn-light"
-          style={{ border: "1px solid yellow" }}
-        >
-          Save Changes
-        </button>
+              <div className="col-12 mt-5">
+                <button
+                  type="submit"
+                  className="btn btn-warning btn-lg fw-bold px-5 shadow-sm"
+                  style={{ borderRadius: "10px" }}
+                >
+                  Save Profile Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   );

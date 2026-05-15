@@ -34,7 +34,9 @@ export const AdminLogin = () => {
 
 
     if (res.data?.success) {
-      localStorage.setItem("adminToken", res.data.token);
+      const { token, user } = res.data.data;
+      localStorage.setItem("adminToken", token);
+      localStorage.setItem("adminUser", JSON.stringify(user));
       navigate("/admin"); 
     } else {
       setError(res.data?.message || "Login failed");
@@ -94,12 +96,18 @@ export const AdminLogin = () => {
                   />
                 </Form.Group>
 
-                <Button variant="primary" type="submit" className="w-100">
-                  Login
+                <Button variant="success" type="submit" className="w-100 fw-bold py-2 shadow-sm" style={{ borderRadius: "10px" }}>
+                  Login to Dashboard
                 </Button>
 
-                <div className="text-start mt-2" style={{ fontSize: "0.9rem" }}>
-                  For new registration <Link to="/admin/register">click here</Link>
+                <div className="text-center mt-3 d-flex flex-column gap-2">
+                  <div style={{ fontSize: "0.9rem" }}>
+                    For new registration <Link to="/admin/register" className="text-success fw-bold text-decoration-none">click here</Link>
+                  </div>
+                  <hr className="my-1 opacity-25" />
+                  <Link to="/login" className="text-muted text-decoration-none small">
+                    Not an admin? <span className="text-success fw-bold">Customer Login</span>
+                  </Link>
                 </div>
               </Form>
 

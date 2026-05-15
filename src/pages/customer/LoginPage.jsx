@@ -104,10 +104,13 @@ export const LoginPage = () => {
         </form>
       </Modal.Body>
 
-      <Modal.Footer className="border-0 justify-content-center">
+      <Modal.Footer className="border-0 justify-content-center flex-column gap-2">
         <p style={{ fontSize: "12px" }} className="text-center m-0">
           By continuing, you agree to our Terms of service & Privacy policy
         </p>
+        <Link to="/admin/login" className="text-success text-decoration-none small fw-bold">
+          Login as Admin
+        </Link>
       </Modal.Footer>
     </Modal>
   );
