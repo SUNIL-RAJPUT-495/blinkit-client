@@ -100,8 +100,8 @@ body {
 .category-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* 4 columns on mobile */
-  gap: 8px;
-  padding: 4px;
+  gap: 4px; /* Reduced gap for larger photo sizes and less space */
+  padding: 0px; /* Reduced padding to maximize image area */
 }
 
 .category-item {
@@ -120,9 +120,7 @@ body {
 .category-item img {
   width: 100%;
   height: auto;
-  aspect-ratio: 1 / 1;
-  object-fit: contain;
-  border-radius: 8px;
+  border-radius: 4px; /* Slightly smaller border radius to fit tight spacing */
 }
 
 @media (min-width: 576px) {
