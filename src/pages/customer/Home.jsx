@@ -80,12 +80,18 @@ export const Home = () => {
           </Col>
         </Row>
         <Row className="my-3">
-          <Col className="d-flex flex-wrap justify-content-start gap-2">
-            {Categories.map((p) => (
-              <div onClick={() => navigate(`/category/${p._id || p.id}`)} key={p._id || p.id} style={{ display: "block", padding: "5px", cursor: "pointer" }}>
-                <img src={p.image} alt={p.name} style={{ height: "150px", width: "auto" }} />
-              </div>
-            ))}
+          <Col>
+            <div className="category-grid">
+              {Categories.map((p) => (
+                <div 
+                  onClick={() => navigate(`/category/${p._id || p.id}`)} 
+                  key={p._id || p.id} 
+                  className="category-item"
+                >
+                  <img src={p.image} alt={p.name} />
+                </div>
+              ))}
+            </div>
           </Col>
         </Row>
       </Container>

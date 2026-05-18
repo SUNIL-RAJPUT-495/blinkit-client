@@ -95,3 +95,54 @@ body {
   animation-name: shimmer;
   animation-timing-function: linear;
 }
+
+/* Responsive Category Grid */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns on mobile */
+  gap: 8px;
+  padding: 4px;
+}
+
+.category-item {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.category-item:hover {
+  transform: scale(1.05);
+}
+
+.category-item img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+@media (min-width: 576px) {
+  .category-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (min-width: 768px) {
+  .category-grid {
+    grid-template-columns: repeat(8, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (min-width: 992px) {
+  .category-grid {
+    grid-template-columns: repeat(10, 1fr);
+    gap: 20px;
+  }
+}
+
