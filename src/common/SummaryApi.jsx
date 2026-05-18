@@ -1,4 +1,4 @@
-export const baseURL = "http://localhost:8080";
+export const baseURL = "https://blinkit-server-sigma.vercel.app";
 
 const SummaryApi = {
   //user
@@ -6,7 +6,6 @@ const SummaryApi = {
     url: "/api/user/register",
     method: "post",
   },
-
   AdminLogin : {
     url : "/api/user/login",
     method: "post"
@@ -16,9 +15,7 @@ const SummaryApi = {
     method:"post"
   },
 
-
   // customer 
-
   customerUser:{
     url:"/api/user/customerUser",
     method:"post"
@@ -31,28 +28,23 @@ const SummaryApi = {
     url: "/api/user/update-user",
     method: "put"
   }
-  
 ,
   verifyCustomerOtp:{
     url:"/api/user/verify-customer-otp",
     method:"post"
   }
-  // image upload
-
+  // image upload 
 ,
   uploadImage: {
     url: "/api/file/upload",
     method: "post",
   },
-
-
    productImage: {
     url: "/api/file/upload-product",
     method: "post",
   },
 
   /*  CATEGORY  */
-
   addCategory: {
     url: "/api/category/add-category",
     method: "post",
@@ -74,7 +66,6 @@ const SummaryApi = {
   },
 
   /* SUB CATEGORY */
-
   addSubCategory: {
     url: "/api/subcategory/add-subcategory",
     method: "post",
@@ -96,7 +87,6 @@ const SummaryApi = {
   },
 
   // product 
-
   addProduct:{
     url: "/api/product/add-product",
     method:"post"
@@ -115,9 +105,6 @@ const SummaryApi = {
     url: "/api/product/edit-Product",
     method:"put"
   },
-
-
-
   // cart
 
   creatOrder:{
@@ -126,10 +113,8 @@ const SummaryApi = {
   },
   verifypayment:{
     url:"/api/order/verifyPayment",
-    method:"post"
+    method:"put"
   },
-
-
   //address
 
   saveAdress:{

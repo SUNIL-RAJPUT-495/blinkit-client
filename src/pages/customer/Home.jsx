@@ -23,6 +23,7 @@ export const Home = () => {
   const [Categories, setCategories] = useState([]);
   const [product, setProduct] = useState([]);
   const [Subcategories, setSubcategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // API Calls
   const getProduct = async () => {
@@ -47,9 +48,12 @@ export const Home = () => {
   };
 
   useEffect(() => {
-    getCategories();
-    getProduct();
-    getSubCategory();
+    const loadData = async () => {
+      setLoading(true);
+      await Promise.all([getCategories(), getProduct(), getSubCategory()]);
+      setLoading(false);
+    };
+    loadData();
   }, []);
 
   // Handlers
@@ -78,9 +82,9 @@ export const Home = () => {
         <Row className="my-3">
           <Col className="d-flex flex-wrap justify-content-start gap-2">
             {Categories.map((p) => (
-              <a href="#" key={p._id || p.id} style={{ display: "block", padding: "5px" }}>
+              <div onClick={() => navigate(`/category/${p._id || p.id}`)} key={p._id || p.id} style={{ display: "block", padding: "5px", cursor: "pointer" }}>
                 <img src={p.image} alt={p.name} style={{ height: "150px", width: "auto" }} />
-              </a>
+              </div>
             ))}
           </Col>
         </Row>
@@ -88,9 +92,23 @@ export const Home = () => {
 
       {/* Products Section */}
       <Container fluid style={{ paddingBottom: totalItems > 0 ? "100px" : "20px" }}>
-        {Subcategories.filter(subCat =>
-          product.some(item => item.subCategory?.[0]?._id === subCat._id)
-        ).map((subCat) => (
+        {loading ? (
+          <div>
+            {[1, 2, 3].map((i) => (
+              <div key={i} style={{ marginBottom: "30px" }}>
+                <div className="skeleton-box" style={{ height: "32px", width: "150px", marginBottom: "15px", borderRadius: "6px" }}></div>
+                <div style={{ display: "flex", gap: "10px", overflow: "hidden" }}>
+                  {[1, 2, 3, 4, 5, 6].map((j) => (
+                    <div key={j} className="skeleton-box" style={{ width: "190px", height: "280px", borderRadius: "10px", flexShrink: 0 }}></div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          Subcategories.filter(subCat =>
+            product.some(item => item.subCategory?.[0]?._id === subCat._id)
+          ).map((subCat) => (
           <div key={subCat._id} style={{ marginBottom: "30px" }}>
             <h2 style={{ fontWeight: "700", marginBottom: "15px" }}>{subCat.name}</h2>
 
@@ -102,11 +120,14 @@ export const Home = () => {
             >
               {product.filter(item => item.subCategory?.[0]?._id === subCat._id)
                 .map((item) => (
-                  <div key={item._id} style={{
+                  <div key={item._id} 
+                    onClick={() => navigate(`/product/${item._id}`)}
+                    style={{
                     flex: "0 0 auto", width: "190px", height: "280px",
                     borderRadius: "10px", border: "1px solid #ddd",
                     boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-                    display: "flex", flexDirection: "column", backgroundColor: "#fff"
+                    display: "flex", flexDirection: "column", backgroundColor: "#fff",
+                    cursor: "pointer"
                   }}
                   >
                     <div style={{ height: "150px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -124,16 +145,18 @@ export const Home = () => {
                       <span style={{ fontWeight: "bold" }}>₹{item.price}</span>
 
                       {getQuantity(item._id) > 0 ? (
-                        <div style={{
+                        <div 
+                          onClick={(e) => e.stopPropagation()}
+                          style={{
                           display: "flex", alignItems: "center", justifyContent: "space-between",
                           backgroundColor: "green", width: "70px", height: "32px", borderRadius: "6px", padding: "0 8px"
                         }}>
-                          <button onClick={() => handleRemoveItem(item._id)} style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "18px" }}>-</button>
+                          <button onClick={(e) => { e.stopPropagation(); handleRemoveItem(item._id); }} style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "18px" }}>-</button>
                           <span style={{ color: "white", fontWeight: "bold" }}>{getQuantity(item._id)}</span>
-                          <button onClick={() => handleAddItem(item)} style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "18px" }}>+</button>
+                          <button onClick={(e) => { e.stopPropagation(); handleAddItem(item); }} style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "18px" }}>+</button>
                         </div>
                       ) : (
-                        <button onClick={() => handleAddItem(item)} style={{
+                        <button onClick={(e) => { e.stopPropagation(); handleAddItem(item); }} style={{
                           height: "32px", width: "70px", backgroundColor: "#f0fff0",
                           border: "1px solid green", color: "green", borderRadius: "6px", fontWeight: "600"
                         }}
@@ -144,7 +167,8 @@ export const Home = () => {
                 ))}
             </div>
           </div>
-        ))}
+        ))
+        )}
         <Row>
           {totalItems > 0 && (
             <div

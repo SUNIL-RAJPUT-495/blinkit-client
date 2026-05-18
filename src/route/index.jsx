@@ -2,6 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import { CustomerLayout } from "../layout/CustomerLayout"
 import { Searchpage } from "../pages/customer/Searchpage.jsx";
 import { Home } from "../pages/customer/Home.jsx";
+import { CategoryPage } from "../pages/customer/CategoryPage.jsx";
+import { ProductDetailsPage } from "../pages/customer/ProductDetailsPage.jsx";
 import { LoginPage } from "../pages/customer/LoginPage.jsx";
 import { AdminLayout } from "../layout/AdminLayout.jsx";
 import { AdminProfile } from "../pages/admin/Profile/AdminProfile.jsx";
@@ -32,7 +34,9 @@ const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "search", element: <Searchpage /> },
       { path: "cart", element: <Cart /> },
-      { path: "success", element: <Success /> }
+      { path: "success", element: <Success /> },
+      { path: "category/:categoryId", element: <CategoryPage /> },
+      { path: "product/:productId", element: <ProductDetailsPage /> }
     ],
 
   },
@@ -56,8 +60,6 @@ const router = createBrowserRouter([
       { path: "register", element: <AdminRegister /> },
       {path:"logout",element:<Logout/>},
       {path:"emailVerification",element:<AdminEmailVerification/>},
-
-    
       {
         path: "",
         element: (

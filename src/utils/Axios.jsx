@@ -19,4 +19,21 @@ Axios.interceptors.request.use(
     }
 );
 
+Axios.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            localStorage.removeItem('accessToken');
+            // If we are not already on the login page, we can alert or redirect.
+            if (window.location.pathname !== '/login') {
+                alert("Your session has expired. Please login again.");
+                window.location.href = '/login';
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default Axios; 

@@ -1,5 +1,5 @@
 import { Container, Row, Col } from "react-bootstrap";
-import { Header } from "../Component/Header";
+import { AdminHeader } from "../Component/admin/AdminHeader";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { 
   MdDashboard, 
@@ -26,7 +26,7 @@ export const AdminLayout = () => {
 
   return (
     <div className="bg-light min-vh-100">
-      <Header />
+      <AdminHeader />
 
       <Container fluid className="px-0 px-md-4 py-4">
         <Row className="g-4">
