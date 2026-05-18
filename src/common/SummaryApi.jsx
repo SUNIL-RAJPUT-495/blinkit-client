@@ -1,4 +1,4 @@
-export const baseURL = "https://blinkit-server-sigma.vercel.app";
+export const baseURL = "https://ecommerce.bhukhabhukhi.com";
 
 const SummaryApi = {
   //user
