@@ -69,85 +69,75 @@ export const CategoryPage = () => {
   );
 
   return (
-    <Container fluid style={{ padding: "20px", paddingBottom: totalItems > 0 ? "100px" : "20px", minHeight: "80vh" }}>
-      <Row>
+    <Container fluid style={{ padding: "10px", paddingBottom: totalItems > 0 ? "100px" : "20px", minHeight: "80vh" }}>
+      <Row className="g-1">
         {/* Left Sidebar for Subcategories */}
-        <Col md={3} style={{ borderRight: "1px solid #eee" }}>
-          <h5 style={{ fontWeight: "bold", marginBottom: "15px" }}>Subcategories</h5>
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <Col xs={3} md={3} style={{ borderRight: "1px solid #eee" }} className="subcategory-sidebar px-1">
+          <div style={{ display: "flex", flexDirection: "column" }}>
             {subcategories.map((subCat) => (
               <div
                 key={subCat._id}
                 onClick={() => setActiveSubCategory(subCat._id)}
+                className="subcategory-item"
                 style={{
-                  padding: "10px",
-                  cursor: "pointer",
-                  borderRadius: "8px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
                   backgroundColor: activeSubCategory === subCat._id ? "#e8f4e9" : "transparent",
                   borderLeft: activeSubCategory === subCat._id ? "4px solid green" : "4px solid transparent",
-                  transition: "all 0.2s ease-in-out"
                 }}
               >
-                <img src={subCat.image} alt={subCat.name} style={{ width: "40px", height: "40px", objectFit: "cover", borderRadius: "50%" }} />
+                <img src={subCat.image} alt={subCat.name} />
                 <span style={{ fontWeight: activeSubCategory === subCat._id ? "bold" : "normal", color: activeSubCategory === subCat._id ? "green" : "#333" }}>
                   {subCat.name}
                 </span>
               </div>
             ))}
-            {subcategories.length === 0 && <p className="text-muted">No subcategories found.</p>}
+            {subcategories.length === 0 && <p className="text-muted text-center" style={{ fontSize: "12px" }}>No subcategories found.</p>}
           </div>
         </Col>
 
         {/* Right Side for Products */}
-        <Col md={9}>
-          <h5 style={{ fontWeight: "bold", marginBottom: "20px" }}>
+        <Col xs={9} md={9} className="px-2">
+          <h5 style={{ fontWeight: "bold", marginBottom: "15px", fontSize: "16px" }}>
             {subcategories.find(s => s._id === activeSubCategory)?.name || "Products"}
           </h5>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+          <div className="product-grid">
             {filteredProducts.map((item) => (
               <div key={item._id} 
                 onClick={() => navigate(`/product/${item._id}`)}
-                style={{
-                width: "190px", height: "280px",
-                borderRadius: "10px", border: "1px solid #ddd",
-                boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-                display: "flex", flexDirection: "column", backgroundColor: "#fff",
-                cursor: "pointer"
-              }}>
-                <div style={{ height: "150px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <img src={item.image?.[0]} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                className="product-card"
+              >
+                <div className="product-image-container">
+                  <img src={item.image?.[0]} alt={item.name} />
                 </div>
 
-                <div style={{ padding: "8px", flexGrow: 1 }}>
-                  <p style={{ fontWeight: "700", margin: "0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {item.name}
-                  </p>
-                  <p style={{ margin: 0, fontSize: "13px", color: "#666" }}>{item.unit}</p>
-                </div>
+                <div className="product-info">
+                  <div>
+                    <p className="product-name">
+                      {item.name}
+                    </p>
+                    <p className="product-unit">{item.unit}</p>
+                  </div>
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px" }}>
-                  <span style={{ fontWeight: "bold" }}>₹{item.price}</span>
+                  <div className="product-action-row">
+                    <span className="product-price">₹{item.price}</span>
 
-                  {getQuantity(item._id) > 0 ? (
-                    <div 
-                      onClick={(e) => e.stopPropagation()}
-                      style={{
-                      display: "flex", alignItems: "center", justifyContent: "space-between",
-                      backgroundColor: "green", width: "70px", height: "32px", borderRadius: "6px", padding: "0 8px"
-                    }}>
-                      <button onClick={(e) => { e.stopPropagation(); handleRemoveItem(item._id); }} style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "18px" }}>-</button>
-                      <span style={{ color: "white", fontWeight: "bold" }}>{getQuantity(item._id)}</span>
-                      <button onClick={(e) => { e.stopPropagation(); handleAddItem(item); }} style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "18px" }}>+</button>
-                    </div>
-                  ) : (
-                    <button onClick={(e) => { e.stopPropagation(); handleAddItem(item); }} style={{
-                      height: "32px", width: "70px", backgroundColor: "#f0fff0",
-                      border: "1px solid green", color: "green", borderRadius: "6px", fontWeight: "600"
-                    }}>Add</button>
-                  )}
+                    {getQuantity(item._id) > 0 ? (
+                      <div 
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                        display: "flex", alignItems: "center", justifyContent: "space-between",
+                        backgroundColor: "green", width: "65px", height: "28px", borderRadius: "6px", padding: "0 6px"
+                      }}>
+                        <button onClick={(e) => { e.stopPropagation(); handleRemoveItem(item._id); }} style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "14px" }}>-</button>
+                        <span style={{ color: "white", fontWeight: "bold", fontSize: "13px" }}>{getQuantity(item._id)}</span>
+                        <button onClick={(e) => { e.stopPropagation(); handleAddItem(item); }} style={{ background: "none", border: "none", color: "white", cursor: "pointer", fontSize: "14px" }}>+</button>
+                      </div>
+                    ) : (
+                      <button onClick={(e) => { e.stopPropagation(); handleAddItem(item); }} style={{
+                        height: "28px", width: "65px", backgroundColor: "#f0fff0",
+                        border: "1px solid green", color: "green", borderRadius: "6px", fontWeight: "600", fontSize: "13px"
+                      }}>Add</button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
