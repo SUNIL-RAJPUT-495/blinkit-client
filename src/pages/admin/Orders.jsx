@@ -3,12 +3,52 @@ import Axios from "../../utils/Axios";
 import SummaryApi from "../../common/SummaryApi";
 import { Table, Badge, Modal, Button } from "react-bootstrap";
 import { MdRefresh, MdClose } from "react-icons/md";
+import { toast } from "react-hot-toast";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "delivered": return "success";
+      case "out_for_delivery": return "info";
+      case "packed": return "primary";
+      case "placed": return "warning";
+      case "cancelled": return "danger";
+      default: return "secondary";
+    }
+  };
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    setUpdatingStatus(true);
+    try {
+      const response = await Axios({
+        ...SummaryApi.updateOrderStatus,
+        data: {
+          orderId,
+          orderStatus: newStatus
+        }
+      });
+      if (response.data.success) {
+        toast.success("Order status updated successfully!");
+        setOrders(prevOrders => 
+          prevOrders.map(o => o._id === orderId ? { ...o, orderStatus: newStatus } : o)
+        );
+        setSelectedOrder(prev => prev ? { ...prev, orderStatus: newStatus } : null);
+      } else {
+        toast.error(response.data.message || "Failed to update order status");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("An error occurred while updating order status");
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
 
   const handleShowDetails = (order) => {
     setSelectedOrder(order);
@@ -56,13 +96,14 @@ const Orders = () => {
       ) : (
         <div className="table-responsive">
           <Table hover className="align-middle">
-            <thead className="table-light">
+             <thead className="table-light">
               <tr>
                 <th>Order ID</th>
                 <th>Customer ID</th>
                 <th>Total Items</th>
                 <th>Amount</th>
-                <th>Status</th>
+                <th>Payment Status</th>
+                <th>Order Status</th>
                 <th>Date</th>
               </tr>
             </thead>
@@ -81,6 +122,11 @@ const Orders = () => {
                   <td>
                     <Badge bg={order.payment?.status === "paid" ? "success" : "warning"} className="text-uppercase">
                       {order.payment?.status || "pending"}
+                    </Badge>
+                  </td>
+                  <td>
+                    <Badge bg={getStatusColor(order.orderStatus)} className="text-uppercase">
+                      {order.orderStatus ? order.orderStatus.replace(/_/g, " ") : "placed"}
                     </Badge>
                   </td>
                   <td className="small text-muted">{new Date(order.createdAt).toLocaleDateString()}</td>
@@ -157,6 +203,27 @@ const Orders = () => {
                 </div>
               </div>
 
+              {/* Order Status Control Section */}
+              <div className="mb-4 bg-light p-3 rounded border">
+                <h6 className="fw-bold mb-2">Modify Order Status</h6>
+                <div className="d-flex align-items-center gap-3">
+                  <select 
+                    className="form-select form-select-sm" 
+                    value={selectedOrder.orderStatus || "placed"} 
+                    onChange={(e) => handleStatusChange(selectedOrder._id, e.target.value)}
+                    disabled={updatingStatus}
+                    style={{ maxWidth: "250px" }}
+                  >
+                    <option value="placed">New / Placed</option>
+                    <option value="packed">Packed</option>
+                    <option value="out_for_delivery">Out for Delivery</option>
+                    <option value="delivered">Delivered / Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                  {updatingStatus && <span className="small text-muted">Updating...</span>}
+                </div>
+              </div>
+
               {/* Summary Section */}
               <div className="d-flex justify-content-end">
                 <div className="bg-light p-3 rounded" style={{ minWidth: "250px" }}>
@@ -164,6 +231,12 @@ const Orders = () => {
                     <span>Payment Status:</span>
                     <Badge bg={selectedOrder.payment?.status === "paid" ? "success" : "warning"} className="text-uppercase">
                       {selectedOrder.payment?.status || "pending"}
+                    </Badge>
+                  </div>
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Order Status:</span>
+                    <Badge bg={getStatusColor(selectedOrder.orderStatus)} className="text-uppercase">
+                      {selectedOrder.orderStatus ? selectedOrder.orderStatus.replace(/_/g, " ") : "placed"}
                     </Badge>
                   </div>
                   <div className="d-flex justify-content-between mb-2">

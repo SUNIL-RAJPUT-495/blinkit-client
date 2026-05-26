@@ -20,7 +20,7 @@ export const Searchpage = () => {
           <div
             className="d-flex  p-2 align-items-center gap-2"
             style={{
-              boxShadow:"0 2px 6px rgba(0, 0, 0, 0.1)",
+              boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
               width: "1000px",
               height: "42px",
               color: "#6c757d",
@@ -40,7 +40,7 @@ export const Searchpage = () => {
             </div>
             <input
               type="text"
-              className="w-100 h-100 border-0 bg-transparent" style={{outline:"none",fontSize:"13px"}} placeholder="Search for atta dal and more"
+              className="w-100 h-100 border-0 bg-transparent" style={{ outline: "none", fontSize: "13px" }} placeholder="Search for atta dal and more"
             />
           </div>
         </div>

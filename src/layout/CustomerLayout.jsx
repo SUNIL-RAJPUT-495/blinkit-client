@@ -20,7 +20,7 @@ export const CustomerLayout = () => {
     <div>
       {!hideHeader && <Header openCart={openCart} />}
 
-     
+
       <div style={{ filter: showCart ? 'blur(0px)' : 'none', transition: 'filter 0.3s' }}>
         <Outlet context={{ openCart, closeCart, showCart }} />
       </div>

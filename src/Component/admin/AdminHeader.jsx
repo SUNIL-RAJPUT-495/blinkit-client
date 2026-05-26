@@ -1,9 +1,9 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
-import { MdLogout } from "react-icons/md";
+import { MdLogout, MdMenu } from "react-icons/md";
 
-export const AdminHeader = () => {
+export const AdminHeader = ({ toggleSidebar }) => {
   const navigate = useNavigate();
 
   return (
@@ -13,7 +13,16 @@ export const AdminHeader = () => {
           className="d-flex flex-wrap justify-content-between align-items-center gap-3"
           style={{ height: "70px" }}
         >
-          <div className="d-flex align-items-center gap-3">
+          <div className="d-flex align-items-center gap-2">
+            {/* Mobile Hamburger menu */}
+            <button 
+              onClick={toggleSidebar} 
+              className="btn btn-light d-lg-none border-0 p-2 me-1 rounded-3 bg-light bg-opacity-75"
+              title="Open Navigation"
+            >
+              <MdMenu size={22} className="text-dark" />
+            </button>
+            
             <Link to="/">
               <img src={logo} alt="logo" style={{ height: "40px" }} />
             </Link>

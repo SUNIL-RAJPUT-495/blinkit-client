@@ -136,6 +136,14 @@ const SummaryApi = {
   getMyOrders: {
     url: "/api/order/getMyOrders",
     method: "get"
+  },
+  getDashboardStats: {
+    url: "/api/order/getDashboardStats",
+    method: "get"
+  },
+  updateOrderStatus: {
+    url: "/api/order/updateOrderStatus",
+    method: "put"
   }
 };
 

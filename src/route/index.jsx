@@ -6,6 +6,7 @@ import { CategoryPage } from "../pages/customer/CategoryPage.jsx";
 import { ProductDetailsPage } from "../pages/customer/ProductDetailsPage.jsx";
 import { LoginPage } from "../pages/customer/LoginPage.jsx";
 import { AdminLayout } from "../layout/AdminLayout.jsx";
+import { AdminDashboard } from "../pages/admin/Dashboard.jsx";
 import { AdminProfile } from "../pages/admin/Profile/AdminProfile.jsx";
 import { SubCategory } from "../pages/admin/SubCategory/SubCategory.jsx";
 import { UploadProductPage } from "../pages/admin/Products/UplodProductPage.jsx";
@@ -68,7 +69,8 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
         children: [
-          { index: true, element: <AdminProfile /> },
+          { index: true, element: <AdminDashboard /> },
+          { path: "dashboard", element: <AdminDashboard /> },
           { path: "profile", element: <AdminProfile /> },
           { path: "category", element: <Category /> },
           { path: "subcategory", element: <SubCategory /> },

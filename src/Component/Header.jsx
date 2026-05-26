@@ -24,6 +24,25 @@ export const Header = () => {
     0
   );
 
+  const handleAccountClick = () => {
+    if (localStorage.getItem("accessToken")) {
+      try {
+        const userStr = localStorage.getItem("user");
+        const user = userStr ? JSON.parse(userStr) : {};
+        if (user.role === "ADMIN") {
+          navigate("/admin/profile");
+        } else {
+          navigate("/account/profile");
+        }
+      } catch (e) {
+        console.error("Error parsing user data:", e);
+        navigate("/account/profile");
+      }
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <header className="border-bottom sticky-top bg-white">
       <div className="container">
@@ -39,71 +58,73 @@ export const Header = () => {
             <Search />
           </div>
 
-          {localStorage.getItem("accessToken") ? (
+          {/* Account & Cart Container */}
+          <div className="d-flex align-items-center gap-3">
+            {/* Desktop Account / Login */}
+            <div className="d-none d-md-block">
+              {localStorage.getItem("accessToken") ? (
+                <div 
+                  className="d-flex align-items-center gap-2 cursor-pointer" 
+                  onClick={handleAccountClick}
+                  style={{ cursor: "pointer" }}
+                >
+                  <CgProfile size={28} className="text-success" />
+                  <span className="fw-bold">Account</span>
+                </div>
+              ) : (
+                <button
+                  onClick={() => navigate("/login")}
+                  className="border-0 bg-white fw-bold"
+                >
+                  Login
+                </button>
+              )}
+            </div>
+
+            {/* Mobile Account / Login Profile Icon */}
             <div 
-              className="d-flex align-items-center gap-2 cursor-pointer" 
-              onClick={() => {
-                try {
-                  const userStr = localStorage.getItem("user");
-                  const user = userStr ? JSON.parse(userStr) : {};
-                  if (user.role === "ADMIN") {
-                    navigate("/admin/profile");
-                  } else {
-                    navigate("/account/profile");
-                  }
-                } catch (e) {
-                  console.error("Error parsing user data:", e);
-                  navigate("/account/profile");
-                }
-              }}
+              className="d-block d-md-none cursor-pointer px-2"
+              onClick={handleAccountClick}
               style={{ cursor: "pointer" }}
             >
-              <CgProfile size={28} className="text-success" />
-              <span className="fw-bold d-none d-lg-inline">Account</span>
+              <CgProfile 
+                size={34} 
+                className={localStorage.getItem("accessToken") ? "text-success" : "text-secondary"} 
+              />
             </div>
-          ) : (
-            <button
-              onClick={() => navigate("/login")}
-              className="border-0 bg-white d-none d-md-block fw-bold"
+
+            {/* Cart Button (Desktop only) */}
+            <span
+              onClick={openCart}
+              className="rounded fw-bold d-flex align-items-center gap-2 d-none d-md-flex"
+              style={{
+                backgroundColor: totalItems > 0 ? "green" : "#eee",
+                padding: "13px",
+                cursor: "pointer",
+                color: totalItems > 0 ? "white" : "black",
+                whiteSpace: "nowrap",
+              }}
             >
-              Login
-            </button>
-          )}
-
-          <span
-            onClick={openCart}
-            className="rounded fw-bold d-flex align-items-center gap-2 d-none d-md-flex"
-            style={{
-              backgroundColor: totalItems > 0 ? "green" : "#eee",
-              padding: "13px",
-              cursor: "pointer",
-              color: totalItems > 0 ? "white" : "black",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <MdOutlineShoppingCart style={{ fontSize: "28px" }} />
-
-            <span className="d-none d-md-inline">
-              {totalItems > 0 ? (
-                <>
-                  {totalItems} items <br />
-                  ₹{totalPrice.toFixed(2)}
-                </>
-              ) : (
-                "My Cart"
-              )}
+              <MdOutlineShoppingCart style={{ fontSize: "28px" }} />
+              <span className="d-none d-md-inline">
+                {totalItems > 0 ? (
+                  <>
+                    {totalItems} items <br />
+                    ₹{totalPrice.toFixed(2)}
+                  </>
+                ) : (
+                  "My Cart"
+                )}
+              </span>
             </span>
-          </span>
+          </div>
 
-        
-        <span className="d-block d-md-none px-3" onClick={()=>{navigate("/login")}}>  <CgProfile size={40} /></span>
+        </div>
+        <div className="d-block d-md-none px-3 w-100">
+          <Search />
+        </div>
       </div>
-      <div  className="d-block d-md-none px-3 w-100">
-        <Search />
-      </div>
-
-    </div>
-    </header >
+    </header>
 
   );
 };

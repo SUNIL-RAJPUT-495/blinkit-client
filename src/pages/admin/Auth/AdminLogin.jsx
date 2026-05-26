@@ -52,10 +52,10 @@ export const AdminLogin = () => {
 
 
   return (
-    <Container fluid className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
-      <Row>
-        <Col>
-          <Card className="p-4 shadow-sm" style={{ minWidth: "500px", maxWidth: "500px", margin: "0 auto" }}>
+    <Container fluid className="min-vh-100 d-flex align-items-center justify-content-center bg-light px-3">
+      <Row className="w-100 justify-content-center">
+        <Col xs={12} sm={10} md={8} lg={6} xl={4} className="px-0">
+          <Card className="p-4 shadow-sm w-100" style={{ maxWidth: "450px", margin: "0 auto" }}>
             <Card.Body>
               
               {/* Small rounded logo */}

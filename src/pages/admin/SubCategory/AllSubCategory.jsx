@@ -4,77 +4,79 @@ import { MdEdit, MdDelete } from "react-icons/md";
 
 export const AllSubCategory = ({ subCategories = [], onEdit, onDelete }) => {
   return (
-    <Container>
+    <Container className="px-3">
       <Row>
-        <Col>
-          <table className="table table-bordered mt-3">
-            <thead className="bg-dark text-white">
-              <tr>
-                <th>Sr.No</th>
-                <th>Name</th>
-                <th>Image</th>
-                <th>Category</th>
-                <th className="text-center">Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {subCategories.length === 0 ? (
+        <Col className="px-0">
+          <div className="table-responsive rounded-3 border shadow-sm mt-3">
+            <table className="table table-hover align-middle mb-0">
+              <thead className="table-dark text-white">
                 <tr>
-                  <td colSpan="5" className="text-center">
-                    No Sub Categories Found
-                  </td>
+                  <th style={{ width: "80px" }}>Sr.No</th>
+                  <th>Sub Category Name</th>
+                  <th>Image</th>
+                  <th>Parent Category</th>
+                  <th className="text-center" style={{ width: "120px" }}>Action</th>
                 </tr>
-              ) : (
-                subCategories.map((item, index) => (
-                  <tr key={item._id}>
-                    <td>{index + 1}</td>
-                    <td>{item.name}</td>
+              </thead>
 
-                    {/* Subcategory Image */}
-                    <td>
-                      {item.image ? (
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          style={{ height: 50, width: 50 }}
-                        />
-                      ) : (
-                        <span>No Image</span>
-                      )}
-                    </td>
-
-                    {/* Category Name and Image */}
-                    <td >
-                     
-                          {item.categoryId.name} 
-                        
-                      
-                    </td>
-
-                    {/* Actions */}
-                    <td className="d-flex gap-2 justify-content-center">
-                      <button
-                        className="border-0 rounded-circle"
-                        style={{ background: "rgba(187,243,200,1)" }}
-                        onClick={() => onEdit(item)}
-                      >
-                        <MdEdit size={20} />
-                      </button>
-
-                      <button
-                        className="border-0 rounded-circle"
-                        style={{ background: "rgba(238,202,202,1)", color: "red" }}
-                        onClick={() => onDelete(item._id)}
-                      >
-                        <MdDelete size={20} />
-                      </button>
+              <tbody>
+                {subCategories.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="text-center py-4 text-muted small">
+                      No Sub Categories Found.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  subCategories.map((item, index) => (
+                    <tr key={item._id}>
+                      <td className="fw-bold">{index + 1}</td>
+                      <td className="fw-semibold">{item.name}</td>
+
+                      {/* Subcategory Image */}
+                      <td>
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="bg-light p-1 border rounded"
+                            style={{ height: 44, width: 44, objectFit: "contain" }}
+                          />
+                        ) : (
+                          <span className="text-muted small">No Image</span>
+                        )}
+                      </td>
+
+                      {/* Category Name */}
+                      <td className="text-secondary small">
+                        {item.categoryId?.name || "N/A"}
+                      </td>
+
+                      {/* Actions */}
+                      <td>
+                        <div className="d-flex gap-2 justify-content-center">
+                          <button
+                            className="btn btn-sm btn-outline-success d-flex align-items-center justify-content-center p-2 rounded-3"
+                            onClick={() => onEdit(item)}
+                            title="Edit Sub Category"
+                          >
+                            <MdEdit size={16} />
+                          </button>
+
+                          <button
+                            className="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center p-2 rounded-3"
+                            onClick={() => onDelete(item._id)}
+                            title="Delete Sub Category"
+                          >
+                            <MdDelete size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </Col>
       </Row>
     </Container>
